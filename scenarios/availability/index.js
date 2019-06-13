@@ -31,14 +31,15 @@ async function main() {
         },
     });
 
+    const hostname = os.hostname();
     while (true) {
-        let timestamp = getTimestamp();
+        const timestamp = getTimestamp();
         try {
             await connection.Open();
             await connection.Close();
-            console.log(`${timestamp},1`);
+            console.log(`${hostname},${timestamp},1`);
         } catch (ex) {
-            console.log(`${timestamp},0`);
+            console.log(`${hostname},${timestamp},0`);
         }
 
         await snooze(10);
