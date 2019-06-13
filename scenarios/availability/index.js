@@ -4,6 +4,7 @@ const {
     JSONSerializer,
     NodeWebSocketTransport,
 } = require('@verkehrsministerium/kraftfahrstrasse');
+const os = require('os');
 
 const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS;
 
