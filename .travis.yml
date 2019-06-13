@@ -4,6 +4,6 @@ services:
   - docker
 
 script:
-  - docker build -t fin1ger/building-a-distributed-wamp-router:scenario-availability .
+  - docker build -t fin1ger/building-a-distributed-wamp-router:scenario-availability ./scenarios/availability
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push fin1ger/building-a-distributed-wamp-router:scenario-availability

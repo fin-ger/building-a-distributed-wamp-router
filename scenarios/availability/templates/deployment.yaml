@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "scenarios-availability.fullname" . }}
+  labels:
+{{ include "scenarios-availability.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "scenarios-availability.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "scenarios-availability.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: fin1ger/building-a-distributed-wamp-router:scenario-availability
+          imagePullPolicy: Always
+          env:
+            - name: ROUTER_ADDRESS
+              value: {{ .Values.routerAddress }}
