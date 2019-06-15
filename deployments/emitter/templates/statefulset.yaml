@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "emitter.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "emitter.name" . }}
+    helm.sh/chart: {{ include "emitter.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  serviceName: {{ include "emitter.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "emitter.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "emitter.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: emitter/server:latest
+          imagePullPolicy: Always
+          env:
+            - name: EMITTER_LICENSE
+              value: "zT83oDV0DWY5_JysbSTPTDr8KB0AAAAAAAAAAAAAAAI" # This is a test license, DO NOT USE IN PRODUCTION!
+            - name: EMITTER_CLUSTER_SEED
+              value: "emitter"
+            - name: EMITTER_CLUSTER_ADVERTISE
+              value: "private:4000"
+            - name: EMITTER_STORAGE_PROVIDER
+              value: "inmemory"
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 4000
+              name: adv

@@ -3,7 +3,7 @@
 set -e
 
 fail() {
-    printf "\e[1;31m !!! \e[1;0m%s\e[0m" "$@"
+    printf "\e[1;31m !!! \e[1;0m%s\e[0m\n" "$@"
     exit 1
 }
 
@@ -87,9 +87,9 @@ kill_random_pod() {
 
     POD="$(kubectl get pods --selector "app.kubernetes.io/name=${SERVICE_NAME}" \
                    --output custom-columns=:.metadata.name \
-                   --no-headers | shuf -n 1)"
+                   --no-headers | grep -v ".*-0" | shuf -n 1)"
 
-    kubectl delete pod --force --grace-period=0 "${POD}"
+    kubectl delete pod --grace-period=1 "${POD}"
 }
 
 run() {
@@ -101,27 +101,27 @@ run() {
             autobahnkreuz_up
             wamp_up "ws://autobahnkreuz:80"
 
-            while [ "${LENGTH}" -ge "$(date +%s)" ]
-            do
-                kill_random_pod "autobahnkreuz"
-                sleep 1
-            done
+            #while [ "${LENGTH}" -ge "$(date +%s)" ]
+            #do
+            #    kill_random_pod "autobahnkreuz"
+            #    sleep 5
+            #done
 
-            wamp_down
-            autobahnkreuz_down
+            #wamp_down
+            #autobahnkreuz_down
 
             return
             ;;
         crossbar)
             crossbar_up
-            sleep 10
+            sleep 5
             wamp_up "ws://crossbar:80/ws"
 
-            while [ "${LENGTH}" -ge "$(date +%s)" ]
-            do
-                kill_random_pod "crossbar"
-                sleep 1
-            done
+            #while [ "${LENGTH}" -ge "$(date +%s)" ]
+            #do
+            #    kill_random_pod "crossbar"
+            #    sleep 5
+            #done
 
             #wamp_down
             #crossbar_down
@@ -135,7 +135,7 @@ run() {
             while [ "${LENGTH}" -ge "$(date +%s)" ]
             do
                   kill_random_pod "emitter"
-                  sleep 1
+                  sleep 5
             done
 
             mqtt_down

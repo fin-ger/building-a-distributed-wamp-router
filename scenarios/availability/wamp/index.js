@@ -13,7 +13,7 @@ function getTimestamp() {
 }
 
 function snooze(ms) {
-    new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function main() {
@@ -27,6 +27,10 @@ async function main() {
 
                 serializer: new JSONSerializer(),
                 transport: NodeWebSocketTransport,
+                transportOptions: {
+                    handshakeTimeout: 100,
+                    timeout: 100,
+                },
                 authProvider: new AnonymousAuthProvider(),
 
                 logFunction: (level, timestamp, file, msg) => {
@@ -35,6 +39,7 @@ async function main() {
                     }
                 },
             });
+
             await connection.Open();
             await connection.Close();
             console.log(`${hostname},${timestamp},1`);
@@ -42,7 +47,8 @@ async function main() {
             console.log(`${hostname},${timestamp},0`);
         }
 
-        await snooze(10);
+        const duration = timestamp + 100 - new Date();
+        await snooze(duration);
     }
 }
 

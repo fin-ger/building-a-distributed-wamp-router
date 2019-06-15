@@ -9,6 +9,6 @@
   "author": "Fin Christensen",
   "license": "MIT",
   "dependencies": {
-    "@verkehrsministerium/kraftfahrstrasse": "^0.5.3"
+    "@verkehrsministerium/kraftfahrstrasse": "^0.5.4"
   }
 }

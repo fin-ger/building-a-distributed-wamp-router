@@ -7,9 +7,12 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: 4000
+      targetPort: adv
       protocol: TCP
+      name: adv
+    - port: 80
+      targetPort: http
       name: http
   selector:
     app.kubernetes.io/name: {{ include "emitter.name" . }}
