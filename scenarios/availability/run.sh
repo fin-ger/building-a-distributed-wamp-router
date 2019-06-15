@@ -89,48 +89,66 @@ kill_random_pod() {
                    --output custom-columns=:.metadata.name \
                    --no-headers | grep -v ".*-0" | shuf -n 1)"
 
-    kubectl delete pod --grace-period=1 "${POD}"
+    kubectl delete pod --grace-period=1 "${POD}" || true
 }
 
 run() {
     ROUTER="$1"
     LENGTH="$(date -d "now +5 min" +%s)"
+    TIMESTAMP="$(date -Is)"
 
     case "${ROUTER}" in
         autobahnkreuz)
             autobahnkreuz_up
+            sleep 10
             wamp_up "ws://autobahnkreuz:80"
+            sleep 20
 
-            #while [ "${LENGTH}" -ge "$(date +%s)" ]
-            #do
-            #    kill_random_pod "autobahnkreuz"
-            #    sleep 5
-            #done
+            while [ "${LENGTH}" -ge "$(date +%s)" ]
+            do
+                kill_random_pod "autobahnkreuz"
+                sleep 5
+            done
 
-            #wamp_down
-            #autobahnkreuz_down
+            mkdir -p plots
+            kubectl logs \
+                    --selector "app.kubernetes.io/name=${SCENARIO}" \
+                    --max-log-requests 100 \
+                    --tail 9223372036854775807 > "plots/${TIMESTAMP}-${SCENARIO}-autobahnkreuz.csv"
+
+            wamp_down
+            autobahnkreuz_down
 
             return
             ;;
         crossbar)
             crossbar_up
-            sleep 5
+            sleep 10
             wamp_up "ws://crossbar:80/ws"
+            sleep 20
 
-            #while [ "${LENGTH}" -ge "$(date +%s)" ]
-            #do
-            #    kill_random_pod "crossbar"
-            #    sleep 5
-            #done
+            while [ "${LENGTH}" -ge "$(date +%s)" ]
+            do
+                kill_random_pod "crossbar"
+                sleep 5
+            done
 
-            #wamp_down
-            #crossbar_down
+            mkdir -p plots
+            kubectl logs \
+                    --selector "app.kubernetes.io/name=${SCENARIO}" \
+                    --max-log-requests 100 \
+                    --tail 9223372036854775807 > "plots/${TIMESTAMP}-${SCENARIO}-crossbar.csv"
+
+            wamp_down
+            crossbar_down
 
             return
             ;;
         emitter)
             emitter_up
+            sleep 5
             mqtt_up
+            sleep 10
 
             while [ "${LENGTH}" -ge "$(date +%s)" ]
             do
@@ -149,3 +167,6 @@ run() {
 }
 
 run crossbar
+run autobahnkreuz
+
+#./plot.py "plots/${TIMESTAMP}-${SCENARIO}"

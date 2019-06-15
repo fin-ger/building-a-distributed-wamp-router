@@ -42,6 +42,7 @@ async function main() {
 
             await connection.Open();
             await connection.Close();
+
             console.log(`${hostname},${timestamp},1`);
         } catch (ex) {
             console.log(`${hostname},${timestamp},0`);
