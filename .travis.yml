@@ -19,3 +19,11 @@ script:
   - docker build -t fin1ger/building-a-distributed-wamp-router:scenario-ram-usage-mqtt ./scenarios/ram-usage/mqtt
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push fin1ger/building-a-distributed-wamp-router:scenario-ram-usage-mqtt
+
+  - docker build -t fin1ger/building-a-distributed-wamp-router:scenario-high-load-wamp ./scenarios/high-load/wamp
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push fin1ger/building-a-distributed-wamp-router:scenario-high-load-wamp
+
+  - docker build -t fin1ger/building-a-distributed-wamp-router:scenario-high-load-mqtt ./scenarios/high-load/mqtt
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push fin1ger/building-a-distributed-wamp-router:scenario-high-load-mqtt

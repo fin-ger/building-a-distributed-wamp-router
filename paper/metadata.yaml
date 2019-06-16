@@ -1,14 +1,15 @@
 ---
-title: 'Paper Title'
+title: 'Prototype Implementation of a Distributed WAMP-Router'
 author:
-  - name: Santos Gallegos
-    affiliation: Universidad de Cuenca
-    location: Cuenca, Ecuador
-    email: santos_g@email.com
+  - name: Fin Christensen
+    affiliation: Otto-von-Guericke University
+    location: Magdeburg, Germany
+    email: fin.christensen@st.ovgu.de
 keywords:
-  - one
-  - two
-  - three
+  - wamp
+  - consensus algorithm
+  - distribution
+  - router
 numbersections: yes
 lang: en
 babel-lang: english
@@ -18,4 +19,3 @@ abstract: |
   It consists of two paragraphs.
 
 ...
-

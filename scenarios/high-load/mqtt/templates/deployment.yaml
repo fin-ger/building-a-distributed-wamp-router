@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "scenario-ram-usage.fullname" . }}
+  name: {{ include "scenario-high-load.fullname" . }}
   labels:
-{{ include "scenario-ram-usage.labels" . | indent 4 }}
+{{ include "scenario-high-load.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "scenario-ram-usage.name" . }}
+      app.kubernetes.io/name: {{ include "scenario-high-load.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "scenario-ram-usage.name" . }}
+        app.kubernetes.io/name: {{ include "scenario-high-load.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: fin1ger/building-a-distributed-wamp-router:scenario-ram-usage-wamp
+          image: fin1ger/building-a-distributed-wamp-router:scenario-high-load-mqtt
           imagePullPolicy: Always
           env:
             - name: ROUTER_ADDRESS

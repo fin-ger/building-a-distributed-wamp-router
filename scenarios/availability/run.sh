@@ -120,7 +120,7 @@ run() {
             wamp_up "ws://autobahnkreuz:80"
             sleep 60
 
-            LENGTH="$(date -d "now +5 min" +%s)"
+            LENGTH="$(date -d "now +1 min" +%s)"
             while [ "${LENGTH}" -ge "$(date +%s)" ]
             do
                 kill_random_pod "autobahnkreuz"
@@ -192,7 +192,7 @@ run() {
 }
 
 run autobahnkreuz
-run crossbar
-run emitter
+#run crossbar
+#run emitter
 
 ./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
