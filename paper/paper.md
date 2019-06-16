@@ -7,9 +7,9 @@ consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-## Web-Advanced-Messaging-Protocol (WAMP)
+## Web-Application-Messaging-Protocol (WAMP)
 
-Some text about WAMP.
+The Web-Application-Messaging-Protocol (WAMP) is a web-socket subprotocol built on top of modern web technologies. It implements a publish and subscribe messaging pattern as well as routed remote procedure calls (RPCs). This enables application developers to use a unified interconnect between application components for two different messaging patterns. The protocol is often used in micro-service environments where one application is a minimalistic service for a single responsibility. A distributed application can be created by interconnecting the micro-services. By building on top of web-sockets this enabled web pages inside the web browser to participate as part of the micro-service infrastructure. This makes it considerably easier for a web-page to communicate with the backend in realtime.
 
 # Existing solutions
 
