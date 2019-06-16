@@ -1,9 +1,6 @@
-# Default values for emitter.
+# Default values for ..
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 5
-
-service:
-  type: ClusterIP
-  port: 80
+replicaCount: 10
+routerAddress: ws://emitter:80

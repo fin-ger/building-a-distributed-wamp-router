@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: fin1ger/building-a-distributed-wamp-router:scenario-availability-wamp
+          image: fin1ger/building-a-distributed-wamp-router:scenario-availability-mqtt
           imagePullPolicy: Always
           env:
             - name: ROUTER_ADDRESS

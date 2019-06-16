@@ -166,7 +166,7 @@ run() {
     esac
 }
 
-run crossbar
 run autobahnkreuz
+run crossbar
 
 #./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
