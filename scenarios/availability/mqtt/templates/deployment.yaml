@@ -24,4 +24,4 @@ spec:
             - name: ROUTER_ADDRESS
               value: {{ .Values.routerAddress }}
             - name: TIMEOUT
-              value: {{ .Values.timeout }}
+              value: "{{ .Values.timeout }}"
