@@ -4,4 +4,3 @@
 
 replicaCount: 10
 routerAddress: ws://crossbar:80/ws
-timeout: 1000

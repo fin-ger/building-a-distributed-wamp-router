@@ -4,4 +4,4 @@
 
 replicaCount: 10
 routerAddress: ws://emitter:80
-timeout: 500
+timeout: 1000

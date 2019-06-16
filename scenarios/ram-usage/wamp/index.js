@@ -1,0 +1,54 @@
+const {
+    AnonymousAuthProvider,
+    Connection,
+    JSONSerializer,
+    NodeWebSocketTransport,
+} = require('@verkehrsministerium/kraftfahrstrasse');
+const os = require('os');
+
+const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS;
+
+function getTimestamp() {
+    return +new Date();
+}
+
+function snooze(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function main() {
+    const hostname = os.hostname();
+    const connection = new Connection({
+        endpoint: ROUTER_ADDRESS,
+        realm: 'default',
+
+        serializer: new JSONSerializer(),
+        transport: NodeWebSocketTransport,
+        authProvider: new AnonymousAuthProvider(),
+
+        logFunction: (level, timestamp, file, msg) => {
+            if (level === 'INFO' || level === 'WARNING' || level === 'ERROR') {
+                console.log(level, timestamp, file, msg);
+            }
+        },
+    });
+
+    await connection.Open();
+    connection.Subscribe(
+        'scenario.ram_usage',
+        () => {
+            console.log('received topic scenario.ram_usage');
+        },
+    );
+
+    while (true) {
+        const timestamp = getTimestamp();
+        console.log('publishing topic scenario.ram_usage');
+        connection.Publish('scenario.ram_usage');
+
+        const duration = timestamp + 100 - new Date();
+        await snooze(duration);
+    }
+}
+
+main();
