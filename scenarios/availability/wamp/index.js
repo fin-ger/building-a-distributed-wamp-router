@@ -7,6 +7,7 @@ const {
 const os = require('os');
 
 const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS.split(',');
+const TIMEOUT = parseInt(process.env.TIMEOUT) || 200;
 
 function getTimestamp() {
     return +new Date();
@@ -32,8 +33,8 @@ async function main() {
                 serializer: new JSONSerializer(),
                 transport: NodeWebSocketTransport,
                 transportOptions: {
-                    handshakeTimeout: 200,
-                    timeout: 200,
+                    handshakeTimeout: TIMEOUT,
+                    timeout: TIMEOUT,
                 },
                 authProvider: new AnonymousAuthProvider(),
 
@@ -52,7 +53,7 @@ async function main() {
             console.log(`${hostname},${timestamp},0`);
         }
 
-        const duration = timestamp + 200 - new Date();
+        const duration = timestamp + TIMEOUT - new Date();
         await snooze(duration);
     }
 }
