@@ -38,7 +38,7 @@ async function main() {
     while (true) {
         const timestamp = getTimestamp();
         await connection.Publish('scenario.high_load');
-        console.log(`${hostname},${getTimestamp() - timestamp}`);
+        console.log(`${getTimestamp()},${hostname},${getTimestamp() - timestamp}`);
     }
 }
 

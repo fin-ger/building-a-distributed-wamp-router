@@ -19,7 +19,7 @@ async function main() {
             await new Promise(resolve => {
                 client.publish('scenario/ram-usage', '', resolve);
             });
-            console.log(`${hostname},${getTimestamp() - timestamp}`);
+            console.log(`${getTimestamp()},${hostname},${getTimestamp() - timestamp}`);
         }
     });
 
