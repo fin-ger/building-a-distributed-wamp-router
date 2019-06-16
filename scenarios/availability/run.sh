@@ -10,6 +10,7 @@ fail() {
 PROJECT_ROOT="../.."
 SCENARIO_NAME="availability"
 SCENARIO="scenario-${SCENARIO_NAME}"
+TIMESTAMP="$(date -Is)"
 
 autobahnkreuz_up() {
     # create subshell to prevent changing PWD
@@ -49,11 +50,18 @@ crossbar_down() {
 }
 
 emitter_up() {
-    fail "not implemented yet"
+    # create subshell to prevent changing PWD
+    (
+        cd "${PROJECT_ROOT}/deployments/emitter" || fail "emitter helm chart not found"
+
+        # it does not matter when this fails
+        helm delete --purge emitter || true
+        helm install --name emitter . || fail "failed to install emitter chart"
+    )
 }
 
 emitter_down() {
-    fail "not implemented yet"
+    helm delete --purge emitter || fail "failed to delete emitter chart"
 }
 
 wamp_up() {
@@ -75,11 +83,21 @@ wamp_down() {
 }
 
 mqtt_up() {
-    fail "not implemented yet"
+    MQTT_ADDRESS="$1"
+
+    # create subshell to prevent changing PWD
+    (
+        cd "${PROJECT_ROOT}/scenarios/${SCENARIO_NAME}/mqtt" || fail "${SCENARIO} helm chart not found"
+
+        # it does not matter when this fails
+        helm delete --purge "${SCENARIO}" || true
+        helm install --set "routerAddress=${MQTT_ADDRESS}" --name "${SCENARIO}" . \
+            || fail "failed to install ${SCENARIO} chart"
+    )
 }
 
 mqtt_down() {
-    fail "not implemented yet"
+    helm delete --purge "${SCENARIO}" || fail "failed to delete ${SCENARIO} chart"
 }
 
 kill_random_pod() {
@@ -95,7 +113,6 @@ kill_random_pod() {
 run() {
     ROUTER="$1"
     LENGTH="$(date -d "now +5 min" +%s)"
-    TIMESTAMP="$(date -Is)"
 
     case "${ROUTER}" in
         autobahnkreuz)
@@ -147,7 +164,7 @@ run() {
         emitter)
             emitter_up
             sleep 5
-            mqtt_up
+            mqtt_up "ws://emitter:80"
             sleep 10
 
             while [ "${LENGTH}" -ge "$(date +%s)" ]
@@ -155,6 +172,12 @@ run() {
                   kill_random_pod "emitter"
                   sleep 5
             done
+
+            mkdir -p plots
+            kubectl logs \
+                    --selector "app.kubernetes.io/name=${SCENARIO}" \
+                    --max-log-requests 100 \
+                    --tail 9223372036854775807 > "plots/${TIMESTAMP}-${SCENARIO}-emitter.csv"
 
             mqtt_down
             emitter_down
@@ -166,7 +189,8 @@ run() {
     esac
 }
 
-run autobahnkreuz
-run crossbar
+#run autobahnkreuz
+#run crossbar
+run emitter
 
-#./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
+./plot.py "plots/${TIMESTAMP}-${SCENARIO}"

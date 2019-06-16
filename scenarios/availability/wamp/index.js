@@ -6,7 +6,7 @@ const {
 } = require('@verkehrsministerium/kraftfahrstrasse');
 const os = require('os');
 
-const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS;
+const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS.split(',');
 
 function getTimestamp() {
     return +new Date();
@@ -16,20 +16,24 @@ function snooze(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function randint(low, high) {
+    return Math.floor(Math.random() * (high - low) + low);
+}
+
 async function main() {
     const hostname = os.hostname();
     while (true) {
         const timestamp = getTimestamp();
         try {
             const connection = new Connection({
-                endpoint: ROUTER_ADDRESS,
+                endpoint: ROUTER_ADDRESS[randint(0, ROUTER_ADDRESS.length - 1)],
                 realm: 'default',
 
                 serializer: new JSONSerializer(),
                 transport: NodeWebSocketTransport,
                 transportOptions: {
-                    handshakeTimeout: 100,
-                    timeout: 100,
+                    handshakeTimeout: 200,
+                    timeout: 200,
                 },
                 authProvider: new AnonymousAuthProvider(),
 
@@ -48,7 +52,7 @@ async function main() {
             console.log(`${hostname},${timestamp},0`);
         }
 
-        const duration = timestamp + 100 - new Date();
+        const duration = timestamp + 200 - new Date();
         await snooze(duration);
     }
 }

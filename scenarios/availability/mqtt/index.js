@@ -24,9 +24,9 @@ async function main() {
         const timestamp = getTimestamp();
         try {
             const client = mqtt.connect(ROUTER_ADDRESS, {
-                connectTimeout: 100,
+                connectTimeout: 200,
                 wsOptions: {
-                    handshakeTimeout: 100,
+                    handshakeTimeout: 200,
                 },
             });
 
@@ -38,7 +38,7 @@ async function main() {
             console.log(`${hostname},${timestamp},0`);
         }
 
-        const duration = timestamp + 100 - new Date();
+        const duration = timestamp + 200 - new Date();
         await snooze(duration);
     }
 }
