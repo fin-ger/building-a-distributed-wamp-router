@@ -14,6 +14,7 @@ FLAGS_PDF = --template=template.latex
 all: pdf
 
 pdf:
+	mkdir -p $(OUTPUT)
 	pandoc -o $(OUTPUT)/paper.pdf $(FLAGS) $(FLAGS_PDF) $(FILES)
 
 clean:
