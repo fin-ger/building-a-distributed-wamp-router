@@ -19,7 +19,7 @@ async function main() {
         setInterval(() => {
             console.log(`${hostname},${getTimestamp()},${msgs}`);
             msgs = 0;
-        });
+        }, 1000);
 
         setInterval(async () => {
             await new Promise(resolve => {
