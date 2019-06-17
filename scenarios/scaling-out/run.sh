@@ -25,8 +25,9 @@ autobahnkreuz_up() {
         cd autobahnkreuz
 
         # it does not matter when this fails
-        helm delete --purge autobahnkreuz --set "replicaCount=$1" || true
-        helm install --name autobahnkreuz . || fail "failed to install autobahnkreuz chart"
+        helm delete --purge autobahnkreuz || true
+        helm install --set "replicaCount=$1" --name autobahnkreuz . \
+            || fail "failed to install autobahnkreuz chart"
     )
 }
 
@@ -40,8 +41,9 @@ emitter_up() {
         cd "${PROJECT_ROOT}/deployments/emitter" || fail "emitter helm chart not found"
 
         # it does not matter when this fails
-        helm delete --purge emitter --set "replicaCount=$1" || true
-        helm install --name emitter . || fail "failed to install emitter chart"
+        helm delete --purge emitter || true
+        helm install --set "replicaCount=$1" --name emitter . \
+            || fail "failed to install emitter chart"
     )
 }
 
@@ -115,7 +117,7 @@ run() {
                 wamp_up "ws://autobahnkreuz:80" $((i * 2))
                 sleep 60
 
-                SINCE="$(date --rfc-3339)"
+                SINCE="$(date --iso-8601=seconds)"
                 LENGTH="$(date -d "now +1 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
@@ -144,7 +146,7 @@ run() {
                 mqtt_up "ws://emitter:80" $((i * 2))
                 sleep 60
 
-                SINCE="$(date --rfc-3339)"
+                SINCE="$(date --iso-8601=seconds)"
                 LENGTH="$(date -d "now +1 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do

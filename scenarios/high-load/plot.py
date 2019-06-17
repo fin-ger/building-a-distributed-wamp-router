@@ -18,7 +18,7 @@ for filename in glob.glob(path + "-*.csv"):
     data = np.genfromtxt(filename, delimiter=',', names=['time', 'name', 'latency'], dtype=None)
     t0 = min(data['time'])
     times = np.array([(t - t0) / 1000 for t in data['time']])
-    plt.plot(times, data['latency'], label=router)
+    plt.plot(times, data['latency'], label=router, marker='.', linestyle='')
 
 plt.legend(loc='best')
 plt.savefig(path + ".png")
