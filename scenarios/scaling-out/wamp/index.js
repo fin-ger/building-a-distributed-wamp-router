@@ -42,10 +42,10 @@ async function main() {
         msgs = 0;
     }, 1000);
 
-    while (true) {
+    setInterval(async () => {
         await connection.Publish('scenario.scaling_out');
         msgs += 1;
-    }
+    }, 0);
 }
 
 main();

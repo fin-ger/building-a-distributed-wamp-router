@@ -44,12 +44,12 @@ async function main() {
         latency = 0;
     }, 1000);
 
-    while (true) {
+    setInterval(async () => {
         const timestamp = getTimestamp();
         await connection.Publish('scenario.high_load');
         latency += getTimestamp() - timestamp;
         msgs += 1;
-    }
+    }, 0);
 }
 
 main();

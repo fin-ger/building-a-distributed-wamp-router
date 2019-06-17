@@ -21,12 +21,12 @@ async function main() {
             msgs = 0;
         });
 
-        while (true) {
+        setInterval(async () => {
             await new Promise(resolve => {
                 client.publish('scenario/scaling-out', '', resolve);
             });
             msgs += 1;
-        }
+        }, 0);
     });
 
     client.on('message', function (topic, message) {

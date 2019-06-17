@@ -23,14 +23,14 @@ async function main() {
             latency = 0;
         }, 1000);
 
-        while (true) {
+        setInterval(async () => {
             const timestamp = getTimestamp();
             await new Promise(resolve => {
                 client.publish('scenario/high-load', '', resolve);
             });
             latency += getTimestamp() - timestamp;
             msgs += 1;
-        }
+        }, 0);
     });
 
     client.on('message', function (topic, message) {

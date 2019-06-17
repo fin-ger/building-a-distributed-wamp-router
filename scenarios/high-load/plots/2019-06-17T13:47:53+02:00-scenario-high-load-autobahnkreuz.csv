@@ -1,0 +1,19 @@
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+
+Writing Node.js report to file: report.20190617.115445.1.0.001.json
+Node.js report completed
+
+<--- Last few GCs --->
+
+[1:0x555e5a50cb60]   306314 ms: Mark-sweep 1925.9 (2080.6) -> 1912.7 (2082.1) MB, 10307.7 / 0.0 ms  (average mu = 0.124, current mu = 0.087) allocation failure scavenge might not succeed
+[1:0x555e5a50cb60]   320474 ms: Mark-sweep 1925.1 (2082.1) -> 1914.5 (2083.6) MB, 11583.8 / 0.0 ms  (average mu = 0.159, current mu = 0.182) allocation failure GC in old space requested
+
+
+<--- JS stacktrace --->
+
+==== JS stack trace =========================================
+
+    0: ExitFrame [pc: 0x555e5879fb42]
+Security context: 0x18b9a829a2f1 <JSObject>
+    1: writeOrBuffer(aka writeOrBuffer) [0xb3e3a1c8fa1] [_stream_writable.js:~367] [pc=0x967c47264aa](this=0x1e00949804d1 <undefined>,0x0d616f2352d9 <Socket map = 0x1db348fe5bc9>,0x0d616f235b31 <WritableState map = 0x1db348fdfb39>,0x1e0094980659 <true>,0x2aa4f4697f69 <Uint8Array map = 0x1db348fa5849>,0x1e0094983649 <String[#6]: buffer>,0x0b3e3a1c9a51 <JSFunc...
+
