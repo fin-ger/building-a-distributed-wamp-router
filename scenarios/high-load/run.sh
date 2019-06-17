@@ -112,7 +112,6 @@ kill_random_pod() {
 
 run() {
     ROUTER="$1"
-    TOKEN="$(kubectl get secret -n kube-system admin-token-9264c -o json | jq -r .data.token | base64 -d)"
 
     case "${ROUTER}" in
         autobahnkreuz)

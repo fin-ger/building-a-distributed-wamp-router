@@ -35,10 +35,20 @@ async function main() {
         () => {},
     );
 
+    let msgs = 0;
+    let latency = 0;
+
+    setInterval(() => {
+        console.log(`${getTimestamp()},${hostname},${latency / msgs}`);
+        msgs = 0;
+        latency = 0;
+    }, 1000);
+
     while (true) {
         const timestamp = getTimestamp();
         await connection.Publish('scenario.high_load');
-        console.log(`${getTimestamp()},${hostname},${getTimestamp() - timestamp}`);
+        latency += getTimestamp() - timestamp;
+        msgs += 1;
     }
 }
 
