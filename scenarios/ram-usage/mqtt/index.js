@@ -21,10 +21,7 @@ async function main() {
         while (true) {
             const timestamp = getTimestamp();
             console.log('publishing topic scenario/ram-usage');
-            client.publish('scenario/ram-usage', '');
-
-            const duration = timestamp + 100 - new Date();
-            await snooze(duration);
+            await new Promise(resolve => client.publish('scenario/ram-usage', '', resolve));
         }
     });
 

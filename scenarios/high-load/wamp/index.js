@@ -31,7 +31,7 @@ async function main() {
 
     await connection.Open();
     connection.Subscribe(
-        'scenario.ram_usage',
+        'scenario.high_load',
         () => {},
     );
 

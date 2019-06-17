@@ -12,10 +12,6 @@ function getTimestamp() {
     return +new Date();
 }
 
-function snooze(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 async function main() {
     const hostname = os.hostname();
     const connection = new Connection({
@@ -44,10 +40,7 @@ async function main() {
     while (true) {
         const timestamp = getTimestamp();
         console.log('publishing topic scenario.ram_usage');
-        connection.Publish('scenario.ram_usage');
-
-        const duration = timestamp + 100 - new Date();
-        await snooze(duration);
+        await connection.Publish('scenario.ram_usage');
     }
 }
 

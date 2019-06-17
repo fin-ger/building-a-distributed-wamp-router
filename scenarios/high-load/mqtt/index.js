@@ -12,12 +12,12 @@ async function main() {
     const client = mqtt.connect(ROUTER_ADDRESS);
 
     client.on('connect', async () => {
-        client.subscribe('scenario/ram-usage');
+        client.subscribe('scenario/high-load');
 
         while (true) {
             const timestamp = getTimestamp();
             await new Promise(resolve => {
-                client.publish('scenario/ram-usage', '', resolve);
+                client.publish('scenario/high-load', '', resolve);
             });
             console.log(`${getTimestamp()},${hostname},${getTimestamp() - timestamp}`);
         }

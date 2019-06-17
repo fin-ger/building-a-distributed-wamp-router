@@ -16,7 +16,9 @@ for filename in glob.glob(path + "-*.csv"):
     router = re.match(".*-(\w+).csv", filename).group(1)
 
     data = np.genfromtxt(filename, delimiter=',', names=['time', 'name', 'latency'], dtype=None)
-    plt.plot(data['time'], data['latency'], label=router)
+    t0 = min(data['time'])
+    times = np.array([(t - t0) / 1000 for t in data['time']])
+    plt.plot(times, data['latency'], label=router)
 
 plt.legend(loc='best')
 plt.savefig(path + ".png")
