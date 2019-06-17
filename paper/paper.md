@@ -46,6 +46,12 @@ a cite[@djangoproject_models_2016].
 
 This is some random text.
 
+![availability](../scenarios/availability/plots/2019-06-16T18:35:30+02:00-scenario-availability.png)
+![container size](../scenarios/container-size/plots/2019-06-16T17:58:45+02:00-scenario-pod-size.png)
+![high-load](../scenarios/high-load/plots/2019-06-17T14:19:34+02:00-scenario-high-load.png)
+![ram-usage](../scenarios/ram-usage/plots/2019-06-17T12:09:43+02:00-scenario-ram-usage.png)
+![scaling-out](../scenarios/scaling-out/plots/2019-06-17T15:30:39+02:00-scenario-scaling-out.png)
+
 # Conclusion
 
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod

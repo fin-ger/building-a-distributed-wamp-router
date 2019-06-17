@@ -4,7 +4,6 @@ FILES = paper.md \
 OUTPUT = build
 
 FLAGS = --bibliography=bibliography.bib \
-		--pdf-engine=pdflatex \
 		--csl=bibliography.csl \
 		-s \
 		-f markdown
