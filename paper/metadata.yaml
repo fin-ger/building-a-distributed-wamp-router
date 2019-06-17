@@ -8,8 +8,8 @@ author:
 keywords:
   - wamp
   - consensus algorithm
-  - distribution
-  - router
+  - distributed applications
+  - routing
 numbersections: yes
 lang: en
 babel-lang: english
