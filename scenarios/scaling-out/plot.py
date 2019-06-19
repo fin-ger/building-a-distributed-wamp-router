@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 
 path = sys.argv[1]
-plt.title('messages per second when increasing replica count every minute')
-plt.xlabel('time in seconds')
+plt.title('messages per second when increasing replica count every 5 minutes')
+plt.xlabel('time in minutes')
 plt.ylabel('messages per second')
 
 for filename in glob.glob(path + "-*.csv"):
@@ -17,7 +17,7 @@ for filename in glob.glob(path + "-*.csv"):
 
     data = np.genfromtxt(filename, delimiter=',', names=['name', 'time', 'msgs'], dtype=None)
     t0 = min(data['time'])
-    times = np.array([(t - t0) / 1000 for t in data['time']])
+    times = np.array([(t - t0) / 1000 / 60 for t in data['time']])
     plt.plot(times, data['msgs'], label=router, marker='.', linestyle='')
 
 plt.legend(loc='best')

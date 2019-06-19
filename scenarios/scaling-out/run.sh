@@ -110,7 +110,7 @@ run() {
         autobahnkreuz)
             mkdir -p plots
 
-            for i in 1 2 3 4 5
+            for i in 1 2 3 4 5 6 7 8 9 10
             do
                 autobahnkreuz_up $i
                 sleep 10
@@ -118,7 +118,7 @@ run() {
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
-                LENGTH="$(date -d "now +1 min" +%s)"
+                LENGTH="$(date -d "now +5 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
@@ -139,7 +139,7 @@ run() {
         emitter)
             mkdir -p plots
 
-            for i in 1 2 3 4 5
+            for i in 1 2 3 4 5 6 7 8 9 10
             do
                 emitter_up $i
                 sleep 10
@@ -147,7 +147,7 @@ run() {
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
-                LENGTH="$(date -d "now +1 min" +%s)"
+                LENGTH="$(date -d "now +5 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
