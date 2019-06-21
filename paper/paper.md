@@ -122,41 +122,64 @@ There exist two major consensus algorithms: Paxos and Raft. In general, raft is 
 
 The network setup for `autobahnkreuz` is more complex than other single-node router network setups. To reduce the network administration tasks when deploying an instance of Autobahnkreuz, a Kubernetes deployment was implemented. Kubernetes provides a declarative language for network and configuration setups of docker containers. By using Kubernetes for the network setup, the deployment gets reproducible and scalable. Docker containers are used to isolate the application components from the host operating system. Each docker container has its own root filesystem with its own GNU/Linux distribution. Containers only share the operating system kernel with the host system and other containers. To make communication with other containers possible, filesystem entries and network ports can be exposed by a container. For Autobahnkreuz only two TCP ports are exposed.
 
-A process from within a Docker container cannot access data outside the container, unless granted by the administrator. By removing standard GNU/Linux utilities from a container, the attack surface of the deployment gets reduced. This includes removing shells, coreutils, and any other program or library that is not needed to run Autobahnkreuz. This results in a container with some shared libraries and a single executable. The attack surface can be further reduced by statically linking the executable, removing shared libraries like the glibc from the container. Now, the container only contains a single executable file. This reduces the possibility of an attacker using preinstalled components in the container to execute scripts or other malicious code. Although this does not eliminate executing malicious code in the container completely, it makes it harder for an attacker to get code running in the container.
+A process from within a Docker container cannot access data outside the container, unless granted by the administrator. By removing standard GNU/Linux utilities from a container, the attack surface of the deployment gets reduced. This includes removing shells, coreutils, and any other program or library that is not needed to run Autobahnkreuz. This results in a container with some shared libraries and a single executable. The attack surface can be further reduced by statically linking the executable, removing shared libraries like the glibc from the container. As the GNU libc cannot be statically linked, the Musl libc is used instead. Now, the container only contains a single executable file. This reduces the possibility of an attacker using preinstalled components in the container to execute scripts or other malicious code. Although this does not eliminate executing malicious code in the container completely, it makes it harder for an attacker to get code running in the container.
 
 In order to connect all router replicas with each other, the leader tells all other replicas behind which domain or IP each replica is running. Kubernetes uses a domain name service (DNS) to resolve domains inside the cluster for each replica. Additionally, when launching a new replica, these domain names can be used to initiate an initial connection with the cluster. However, during the development of the Kubernetes deployment, a bug was found in the DNS of Kubernetes (coredns). The bug is appearing within the first 30 seconds after startup of a replica. During these 30 seconds, new domain names will sometimes result in `NXDOMAIN` or `REFUSED`. This leads to an unstable startup of new replicas. The bug is reported upstream and confirmed. Autobahnkreuz resolves this issue by issuing DNS lookups until the lookup succeeds.
 
 # Evaluation
 
-The availability scenario runs a router with 5 replicas (if horizontal scaling is supported) where 10 clients (nodejs implementation) try to get a connection every second. The router instances are than randomly killed every 30 seconds. The autobahnkreuz router crashes after 10 seconds in the scenario as new members in the routing cluster are accepting connections while not synchronized to the cluster which destabilizes the cluster. The autobahnkreuz implementation fails to provide the expected availability!
+Autobahnkreuz was implemented as a prototypical implementation to prove the feasibility of a distributed WAMP routing application. It was expected to have bugs and incomplete WAMP protocol support. However, it is still valuable to compare Autobahnkreuz to existing routing applications. Therefore five scenarios were designed to evaluate the success of this project. The tests were run in a `k3s` setup in a VirtualBox machine with 8 gigabytes of RAM and one CPU core. The virtual machine was running on an Intel Core i7-6700HQ host CPU.
 
-![availability](../scenarios/availability/plots/2019-06-16T18:35:30+02:00-scenario-availability.png)
+## Container Size
 
-The container size scenario checks the size of the latest docker container that is provided by upstream. The lower the container size, the easier the deployment within a cluster orchestrator like kubernetes is (lower than 100 MiB is sufficient for fast deployment).
+The container size is an indicator for the attack surface of a container. The lower the container size, the less dependencies and components of the application can be exploited to execute malicious code inside the container. Additionally, smaller container sizes make a deployment in Kubernetes more stable as the initial setup time of a replica is reduced due to a smaller download size when fetching the container from a container registry. During a failure scenario this helps administrators move the application to other physical machines.
 
-![container size](../scenarios/container-size/plots/2019-06-16T17:58:45+02:00-scenario-pod-size.png)
+![The container size scenario compares the size of the latest Docker image from Docker Hub\label{container-size}](../scenarios/container-size/plots/2019-06-16T17:58:45+02:00-scenario-pod-size.png)
 
-The high load scenario lets 10 clients publish topics to the other clients as fast as they can. The latency until a topic is signaled as published by the router is messured over time.
+The container size scenario (Figure \ref{container-size}) checks the size of the latest docker container that is provided on the Docker Hub. Docker Hub is a central registry for docker containers. Autobahnkreuz is not using a GNU/Linux distribution at all, instead a single statically linked binary is contained in the container. Emitter's Docker containers are based on a Linux distribution that is not using the GNU tools and instead is using Musl libc and Busybox. Alpine is a "security-oriented, lightweight Linux distribution" that is often used for docker deployment due to the small footprint. Crossbar's docker containers are based on the Debian GNU/Linux distribution which accounts for the large container size. Crossbar does not include the complete userland of Debian but a trimmed down version called `debian-slim` which omits documentation files and other optional resources.
 
-![high-load](../scenarios/high-load/plots/2019-06-17T14:19:34+02:00-scenario-high-load.png)
+## RAM Usage
 
-The ram usage scenario messures how much memory is consumed by all processes that belong to the routing application while 10 clients are sending a publication every 100 milliseconds.
+![The RAM usage scenario measures the overall memory consumption of the routers while 10 clients are communicating over the routers\label{ram-usage}](../scenarios/ram-usage/plots/2019-06-17T12:09:43+02:00-scenario-ram-usage.png)
 
-![ram-usage](../scenarios/ram-usage/plots/2019-06-17T12:09:43+02:00-scenario-ram-usage.png)
+When running multiple instances of a single application inside a cluster environment it is preferable to have a low memory footprint to reduce additional costs associated with the scaling of application instances. The RAM usage scenario (Figure \ref{ram-usage}) measures the total memory consumption of all replicas where five replicas of Emitter and Autobahnkreuz were running. Crossbar was running as a single instance as the open source version does not support running replicas. During the scenario 10 clients were sending and receiving topic publications every 100 milliseconds. Autobahnkreuz shows the lowest memory consumption, which was expected as Rust uses manual memory management with a garbage collection. Emitter is written in the Go programming language and therefore uses a garbage collection for memory management. The highest memory consumption is observed from Crossbar. Crossbar is written in Python where the source code has to be interpreted at runtime. Therefore the memory consumption is considerably higher.
 
-The scaling-out scenario increases the router instances by one and the client instances by two every minute and messures the overall message throughput per client. The scenario is currently run on a single machine while a more realistic scenario would be to also increase the number of machine with the replica count.
+## High Message Throughput
 
-![scaling-out](../scenarios/scaling-out/plots/2019-06-17T15:30:39+02:00-scenario-scaling-out.png)
+![The high message troughput scenario lets 10 clients publish topics as fast as possible to all other clients. The latency until a publication is singaled as published is measured.\label{high-load}](../scenarios/high-load/plots/2019-06-17T14:19:34+02:00-scenario-high-load.png)
+
+The high message throughput scenario (Figure \ref{high-load}) measures the latency until a publication is signaled as published by the router. This scenario therefore includes the latency of the client library implementation when publishing a topic. The scenario lets 10 clients publish topics to all other clients as fast as they can. This means, a new publication is sent as soon as the router signals the previous publication as published. For all clients, a NodeJS test implementation was used. However, as Emitter does not implement the WAMP protocol, another client library (`mqtt-js`) was used to communicate with the router. The WAMP test implementation uses the `kraftfahrstrasse` client library.
+
+A higher latency for topic publications is expected from routers running in replicated setups as messages may get routed to other physical machines. However, Autobahnkreuz has about the same response time as Crossbar. By using a programming language that is compiling to native code, Autobahnkreuz counteracts the drawbacks of running in a replicated setup when compared to Crossbar. The source for the higher latency of publication responses in Emitter can be due to the use of a different client library implementation.
+
+## Availability
+
+![The availability scenario lets a random router replica fail every 30 seconds while 10 clients are continuously trying to get a connection to the router\label{availability}](../scenarios/availability/plots/2019-06-16T18:35:30+02:00-scenario-availability.png)
+
+When running a distributed application inside a cluster setup, failures of single replicas should not affect the availability of the provided service as other replicas can take over the traffic of the failed node. The cluster orchestrator can then launch a new replica to replace the failed one. The availability scenario (Figure \ref{availability}) tests if the routing service stays available if replicas are failing. For this scenario, routers that support replication were running with five replicas. To check the availability, 10 clients are each trying to connect to the router every second. The test kills a random replica every 30 seconds and waits until the deletion of the replica has finished.
+
+Emitter is handling the replica failures flawlessly, while Crossbar is unavailable every 30 seconds. This is expected as Crossbar is running as a single application instance. Autobahnkreuz however crashes after 10 seconds into the test as new members in the routing cluster are accepting connections while not synchronized to the cluster. This destabilizes the cluster and causes the replicas to fail. The orchestration framework tries to restart the failed replicas but new replicas are unable to join the cluster as existing replicas do not contain a consistent state. The autobahnkreuz implementation fails to provide the expected availability! As this bug is caused by a misbehaving implementation and has not its cause in the design of the router, it can be fixed by checking the progress of the synchronization of new replicas. Additionally, a readiness probe must be installed to inform Kubernetes about the ability of a replica to accept connections.
+
+## Scaling-Out
+
+> TODO: run on multiple machines
+
+Distributed applications are often scaled to increase the number of requests that can be handled by the system. The scaling-out scenario (Figure \ref{scaling-out}) tests how many topics can be published per second on every client. The test starts running with two clients and a single routing replica and increases by one routing replica and two clients every five minutes. The scenario is currently run on a single machine while a more realistic scenario would be to also increase the number of machines with the replica count.
+
+![The scaling-out scenario is running a router with initially two clients that are continiously sending publications. The client count and router replicas are increased every five minutes.\label{scaling-out}](../scenarios/scaling-out/plots/2019-06-17T19:10:12+02:00-scenario-scaling-out.png)
 
 # Conclusion
 
  * safe async APIs are hard!
+ * deployment was right choice
+ * async networking in Rust is not finished yet
 
 # Future Work
 
  * web-assembly API for router plugins
     * current WAMP-router implementations suffer from too many features
     * error rate rises
+ * fix the availability bug in Autobahnkreuz
 
 # References
 
