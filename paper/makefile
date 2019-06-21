@@ -19,3 +19,8 @@ pdf:
 clean:
 	rm build/*
 
+watch:
+	ls * | entr $(MAKE) pdf
+
+view:
+	evince build/paper.pdf

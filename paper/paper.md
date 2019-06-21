@@ -10,7 +10,7 @@ This paper will describe one possible solution to the problems that implementati
 
 # Sharing State
 
-The central problem when implementing a distributed application is sharing the state of one instance of the application (replica). The state of an application is the data that is needed for the application to define its behavior. When the state of a single application with several replicas gets out of sync, the behavior of an individual replica may differ from the behavior of other replicas. This can lead to severe damage of the underlying data, downtimes for the provided services, and even data leaks which may penetrate the security of a server.
+The central problem when implementing a distributed application is sharing the state of one instance of the application (replica) to all other replicas. The state of an application is the data that is needed for the application to define its behavior. When the state of a single application with several replicas gets out of sync, the behavior of an individual replica may differ from the behavior of other replicas. This can lead to severe damage of the underlying data, downtimes for the provided services, and even data leaks which may penetrate the security of a server.
 
 ## Existing Solutions
 
@@ -18,7 +18,7 @@ A possible solution to this problem is to manage the data outside of the applica
 
 ### Distributed Databases and Key-Value Stores
 
-Databases and key-value stores provide a logically centralized view when accessing the stored data. This enables applications to be implemented as stateless services, that ask at the central database for the current state of the application. By storing no state in the application itself, it can be replicated by just starting several instances of the application. This works because all replicas of the application are accessing the application state via the central database. The database implementation is than responsible for distributing the state over multiple machines. There are several distributed databases available that provide exactly this functionality. Examples are PostgreSQL, MariaDB, etcd, and TiKV/TiDB.
+Databases and key-value stores provide a logically centralized view when accessing the stored data. This enables applications to be implemented as stateless services, that ask at the central database for the current state of the application. By storing no state in the application itself, it can be replicated by just starting several instances of the application. This works because all replicas of the application are accessing the application state via the central database. The database implementation is then responsible for distributing the state over multiple machines. There are several distributed databases available that provide exactly this functionality. E.g. PostgreSQL, MariaDB, etcd, and TiKV/TiDB.
 
 ### Distributed Filesystems
 
@@ -26,11 +26,11 @@ A distributed filesystem is a filesystem that runs on multiple machines at the s
 
 ### Consensus Algorithms
 
-To prevent state inconsistencies between replicas, consensus algorithms can be used to synchronize data between machines, when a consensus is reached about a state change. This can be implemented by starting an election for a state change. The machines in the cluster must vote in the election for the state change. A majority of the machines has to approve the state change to take effect. Otherwise, the state change gets rejected and a new election must be started. To prevent elections for every state change, algorithms exist that install a leader in the cluster which is exclusively granted the right to change the state of the cluster. The leader gets elected by the cluster when no leader is known by the members. All other members of the cluster enter a follower state, where the state changes of the leader are followed. When a follower receives a request to change the state, it has to forward the state change to the current leader.
+To prevent state inconsistencies between replicas, consensus algorithms can be used to synchronize data between machines, after a consensus is reached about a state change. This can be implemented by starting an election for a state change. The machines in the cluster must vote in the election for the state change. A majority of the machines has to approve the state change to take effect. Otherwise, the state change gets rejected and a new election must be started. To prevent elections for every state change, algorithms exist that install a leader in the cluster which is exclusively granted the right to change the state of the cluster. The leader gets elected by the cluster members when no leader is known by the members. All other members of the cluster enter a follower state, where the state changes of the leader are followed. When a follower receives a request to change the state, it has to forward the state change to the current leader.
 
 ## Other Implementations
 
-There are existing WAMP router implementations that provide cloud-native functionality. Crossbar.io FX is a commercial routing application by Crossbar.io GmbH which provides cloud and large-scale routing for enterprise applications. The router consists out of two components: Crossbar FX Edge and Crossbar FX Master. The former provides local routing capabilities and edge application component management. Crossbar FX Master provides large-scale routing by connecting multiple master and edge instances.
+There are existing WAMP router implementations that provide cloud-native functionality. Crossbar.io FX is a commercial routing application by Crossbar.io GmbH which provides cloud and large-scale routing for enterprise applications. The router consists of two components: Crossbar FX Edge and Crossbar FX Master. The former provides local routing capabilities and edge application component management. Crossbar FX Master provides large-scale routing by connecting multiple master and edge instances.
 
 Bondy is another open source WAMP routing application written in Erlang that provides horizontal scaling. It is developed by Leapsight and uses Partisan for cluster membership management, Plumtree for epidemic broadcasting, and an eventual consistent data store. The application is currently under active development. At this point there exists no release of Bondy.
 
@@ -38,7 +38,7 @@ When not focusing on the WAMP protocol, there exist many cloud-native message ro
 
 ## State of a Router
 
-In a setup where a WAMP router is distributed over multiple machines, the routing information for messages has to synchronized between the router replicas. The routing information for a wamp router consists out of the following parts:
+In a setup where a WAMP router is distributed over multiple machines, the routing information for messages has to synchronized between the router replicas. The routing information for a WAMP router consists of the following parts:
 
 ### Subscriptions
 
@@ -54,7 +54,7 @@ As not all clients of a router are connected to the same replica, the replicas m
 
 ## Data Transport
 
-Besides the state needed for the routing there is other data that must be transferred between router replicas. Publications and procedure calls contain a message body where parameters and payloads are stored. When forwarding a publication or procedure call to another client, this data must be potentially transferred to another replica. The frequency and size of a topic publication payload can get quite high. Therefore it is undesirable to initiate a state change for publications and RPCs. Instead of routing every publications and RPC over the leader of the cluster, the payload can be transferred directly between the replicas that manage affected clients. This is possible as neither publications nor RPCs contain information that is relevant for the routing.
+Besides the state needed for the routing there is other data that must be transferred between router replicas. Publications and procedure calls contain a message body in which parameters and payloads are stored. When forwarding a publication or procedure call to another client, this data must be potentially transferred to another replica. The frequency and size of a topic publication payload can get quite high. Therefore it is undesirable to initiate a state change for publications and RPCs. Instead of routing every publications and RPC over the leader of the cluster, the payload can be transferred directly between the replicas that manage affected clients. This is possible as neither publications nor RPCs contain information that is relevant for the routing.
 
 When clients are connecting to a router, the clients location in the cluster must be synchronized to other replicas. Most clients will then start registering procedures in the router and subscribe for topics. Although it is possible to register and subscribe procedures any time during an active connection to the router, the majority of messages produced by a client after its initial setup are publications and procedure calls. Therefore state changes are far less frequent when not including publications and procedure calls in the router state.
 
@@ -64,7 +64,7 @@ Therefore, it was decided to use a consensus algorithm for synchronizing the rou
 
 ## Consensus Algorithms
 
-There exist two major consensus algorithms: Paxos and Raft. In general, raft is considered easier to understand and provides a more general solution for state synchronization. As the goal of this paper is not to implement one of these consensus algorithms but rather use one of them to implement a distributed WAMP routing application, raft was selected as there already exists an implementation for the Rust programming language called `raft-rs`. The `raft-rs` library is also used in TiKV and TiDB which are part of the Cloud Native Computing Foundation (CNCF). The `raft-rs` library is maintained and developed by Pingcap who also own TiKV and TiDB. This leads to the decision to use `raft-rs` for state synchronization between WAMP router replicas.
+There exist two major consensus algorithms: Paxos and Raft. In general, raft is considered easier to understand and provides a more general solution for state synchronization. As the goal of this paper is not to implement one of these consensus algorithms but rather use one of them to implement a distributed WAMP routing application, Raft was selected as there already exists an implementation for the Rust programming language called `raft-rs`. The `raft-rs` library is also used in TiKV and TiDB which are part of the Cloud Native Computing Foundation (CNCF). The `raft-rs` library is maintained and developed by Pingcap who also own TiKV and TiDB. This leads to the decision to use `raft-rs` for state synchronization between WAMP router replicas.
 
 # Implementing a WAMP-Router
 
@@ -120,8 +120,11 @@ There exist two major consensus algorithms: Paxos and Raft. In general, raft is 
 
 # Deployment
 
- * deployed in kubernetes
- * found caching bug in coredns
+The network setup for `autobahnkreuz` is more complex than other single-node router network setups. To reduce the network administration tasks when deploying an instance of Autobahnkreuz, a Kubernetes deployment was implemented. Kubernetes provides a declarative language for network and configuration setups of docker containers. By using Kubernetes for the network setup, the deployment gets reproducible and scalable. Docker containers are used to isolate the application components from the host operating system. Each docker container has its own root filesystem with its own GNU/Linux distribution. Containers only share the operating system kernel with the host system and other containers. To make communication with other containers possible, filesystem entries and network ports can be exposed by a container. For Autobahnkreuz only two TCP ports are exposed.
+
+A process from within a Docker container cannot access data outside the container, unless granted by the administrator. By removing standard GNU/Linux utilities from a container, the attack surface of the deployment gets reduced. This includes removing shells, coreutils, and any other program or library that is not needed to run Autobahnkreuz. This results in a container with some shared libraries and a single executable. The attack surface can be further reduced by statically linking the executable, removing shared libraries like the glibc from the container. Now, the container only contains a single executable file. This reduces the possibility of an attacker using preinstalled components in the container to execute scripts or other malicious code. Although this does not eliminate executing malicious code in the container completely, it makes it harder for an attacker to get code running in the container.
+
+In order to connect all router replicas with each other, the leader tells all other replicas behind which domain or IP each replica is running. Kubernetes uses a domain name service (DNS) to resolve domains inside the cluster for each replica. Additionally, when launching a new replica, these domain names can be used to initiate an initial connection with the cluster. However, during the development of the Kubernetes deployment, a bug was found in the DNS of Kubernetes (coredns). The bug is appearing within the first 30 seconds after startup of a replica. During these 30 seconds, new domain names will sometimes result in `NXDOMAIN` or `REFUSED`. This leads to an unstable startup of new replicas. The bug is reported upstream and confirmed. Autobahnkreuz resolves this issue by issuing DNS lookups until the lookup succeeds.
 
 # Evaluation
 
