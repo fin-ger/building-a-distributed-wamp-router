@@ -36,7 +36,7 @@ script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push fin1ger/building-a-distributed-wamp-router:scenario-scaling-out-mqtt
 
-  - docker run -it --rm -v "$(pwd):/data" --entrypoint /bin/ash pandoc/latex -c "cd paper && apk add texmf-dist-publishers make && cp /usr/share/texmf-dist/tex/latex/IEEEtran/IEEEtran.cls . && make pdf && rm IEEEtran.cls"
+  - docker run -it --rm -v "$(pwd):/data" --entrypoint /bin/ash pandoc/latex -c "cd paper && apk add make && make pdf"
 
 before_deploy:
   - git tag -f travis-dev-build
