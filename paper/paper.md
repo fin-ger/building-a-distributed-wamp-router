@@ -66,7 +66,7 @@ Therefore, it was decided to use a consensus algorithm for synchronizing the rou
 
 There exist two major consensus algorithms: Paxos and Raft. In general, raft is considered easier to understand and provides a more general solution for state synchronization. As the goal of this paper is not to implement one of these consensus algorithms but rather use one of them to implement a distributed WAMP routing application, Raft was selected as there already exists an implementation for the Rust programming language called `raft-rs`. The `raft-rs` library is also used in TiKV and TiDB which are part of the Cloud Native Computing Foundation (CNCF). The `raft-rs` library is maintained and developed by Pingcap who also own TiKV and TiDB. This leads to the decision to use `raft-rs` for state synchronization between WAMP router replicas.
 
-# Implementing a WAMP-Router
+# Implementing a Distributed WAMP-Router
 
  * raft-rs library from pingcap used
  * raft paper was of great help
@@ -75,25 +75,39 @@ There exist two major consensus algorithms: Paxos and Raft. In general, raft is 
 
 ## Connection Management
 
+ * simple interface to easily implement new transport technologies
  * `ConnectionManager`
      * establishing connections
+     * listens for incoming connections
  * `Transport`
      * used for communication between the nodes
      * inmemory-channel transport
      * TCP transport
+     * serializes and deserializes messages from and to nodes
+     * msgpack is used for serialization and deserialization
+     * messages from `raft-rs` are encoded with Googles Protobuf
+     * buffers messages until they are read by the `Node`
 
 ## State Management
 
  * `Machine`
     * handler object to easily change the state of the node
+    * can be easily copied to give multiple parties access to the machine (threads, scopes, etc.)
  * `MachineCore`
     * writes the state to a storage
+ * `Machine` and `MahcineCore` use a `RequestManager` to establish a thread safe communication
+ * therefore the access to the `Machine` is independent from the thread
+ * all actions on the `RequestManager` are asynchronous to not block the current thread when waiting for the raft to process a proposal
+ * a machine can be serialized and deserialize to enable snapshotting of a state machine
  * Experiment
     * a declarative state machine using rust's procedural macros
+ * state machine for the WAMP router was implemented on a subscription and registration list, where subscription and registrations can be added and removed
+ * TODO: add full state machine description of the WAMP router
 
 ## Storing State
 
  * `Storage`
+    * easy interface to enable fast development of new storage implementations
     * manages the raft-log
     * appending and reading of the state changes
  * Storage implementations
@@ -111,6 +125,24 @@ There exist two major consensus algorithms: Paxos and Raft. In general, raft is 
        * `ConnectionManager`
        * `Storage`
     * completely thread safe
+    * dispatches `NodeCore` to a thread and manages the thread until the end of its lifetime
+    * `NodeCore` is advanced every 100ms
+    * A gateway is used to initially join the cluster
+    * Gateway is a resource identifier like IP Address or domain name with a TCP port
+    * The gateway currently requires the network interface serving the node interconnect to be the same as the gateway address for initially booting the cluster. The first node will compare its own interface address with the gateway address and if they match, a new cluster will be created with the current node set to the leader.
+    * other approaches for managing nodes in a cluster
+       * dns lookup to the service domain results in all Pod IPs that belong to the service
+       * this is only available when a kubernetes service is configured to `ClusterIP: none`.
+ * `NodeCore`
+    * fetches incoming connection from the connection manager and handles connection setup (Hello/Welcome)
+    * fetches new messages from other members of the cluster for processing
+    * state change proposals are collected
+    * forwards proposals to the leader if the leader is not me
+    * processes proposals on the raft and state machine
+    * applies changes from the raft
+    * handles membership changes
+    * applies committed state changes to the underlying state machine
+    * manages a timeout for one computation cycle to ensure responsiveness of a node
 
 ## Implementing the Protocol
 
