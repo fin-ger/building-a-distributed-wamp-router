@@ -68,48 +68,27 @@ There exist two major consensus algorithms: Paxos and Raft. In general, raft is 
 
 # Implementing a Distributed WAMP-Router
 
- * raft-rs library from pingcap used
- * raft paper was of great help
+The development of Autobahnkreuz started with implementing the state management between multiple router instances. As the `raft-rs` library which is developed by PingCAP implements the Raft consensus algorithm only, the new `simple-raft-node` library was created to extend `raft-rs` with network transport abstractions, state machine management, and log storage writing. PingCAP is the developer of the horizontal scalable, cloud-native, highly available TiDB database system. During the implementation of `simple-raft-node` the Raft paper was used as a reference for design decisions. The following sections will describe in detail, how the library was implemented.
+
  * initializing a cluster
     * not well covered in the paper
 
 ## Connection Management
 
- * simple interface to easily implement new transport technologies
- * `ConnectionManager`
-     * establishing connections
-     * listens for incoming connections
- * `Transport`
-     * used for communication between the nodes
-     * inmemory-channel transport
-     * TCP transport
-     * serializes and deserializes messages from and to nodes
-     * msgpack is used for serialization and deserialization
-     * messages from `raft-rs` are encoded with Googles Protobuf
-     * buffers messages until they are read by the `Node`
+In order to establish connections between multiple nodes, the router needs to be able to accept connections from new peers and send Raft messages to specific peers. A `ConnectionManager` trait was added that manages incoming connections and informs the node if a new peer is available. Connections received from a `ConnectionManager` implement the `Transport` trait which enables sending and receiving of Raft messages. This makes it possible to implement several different physical transports without affecting the node implementation. The connection manager and the transports are used by the node core to implement the communication management which includes the initial handshake for new connections, connecting to new peers of the cluster, and removing nodes which lost connection from the cluster. The library provides transport implementations for in-memory channels and TCP transports.
+
+The TCP transport implementation is using the `msgpack` serialization format for serializing and deserializing data of a TCP stream. Data that originates in the `raft-rs` library is serialized with Google's Protobuf protocol as the `raft-rs` library provides its own serialization and deserialzation implementation. The transport implementation will buffer all incoming and outgoing messages until they get processed by the node core. This enables the node core to read fully transmitted message objects only, as the implementation will wait until all data belonging to a message object was received. Autobahnkreuz is using the TCP `Transport` and `ConnectionManager` implementations to interconnect router instances. The in-memory channels were only used for testing purposes of the `simple-raft-node` library and are not used in Autobahnkreuz.
 
 ## State Management
 
- * `Machine`
-    * handler object to easily change the state of the node
-    * can be easily copied to give multiple parties access to the machine (threads, scopes, etc.)
- * `MachineCore`
-    * writes the state to a storage
- * `Machine` and `MahcineCore` use a `RequestManager` to establish a thread safe communication
- * therefore the access to the `Machine` is independent from the thread
- * all actions on the `RequestManager` are asynchronous to not block the current thread when waiting for the raft to process a proposal
- * a machine can be serialized and deserialize to enable snapshotting of a state machine
- * Experiment
-    * a declarative state machine using rust's procedural macros
- * state machine for the WAMP router was implemented on a subscription and registration list, where subscription and registrations can be added and removed
- * TODO: add full state machine description of the WAMP router
+When new message from other routers are arriving, they may contain state-change-proposals which are processed by the node core. When the node core commits a received state-change-proposal, the state machine must apply the state-change to its local state. The `simple-raft-node` library provides two traits for a state machine implementation. The `Machine` trait is used to provide an interface for the user to read and write new states to the machine. The `MachineCore` trait is storing the actual state of the cluster node. When a user requests a write on a `Machine`, the implementation will use a `RequestManager` to send a new state-change-proposal to the cluster. The `RequestManager` is provided by the library and is fully thread-safe. All operations on a request manager are asynchronous to prevent users from blocking the current thread while waiting for the Raft to process a possibly long taking state-change-proposal. When a proposal succeeds and gets committed to the cluster, the `MachineCore` implementation will be informed about the state-change. As a `MachineCore` is only allowed to be changed when a state-change-proposal gets committed, it is owned by the node itself and is not accessible by the user. The user must read and write all states via a `Machine` implementation that works like a handler object to the `MachineCore`. This also allows `Machine` implementations to be freely copied and moved between scopes, as a `Machine` is not holding the machine state. This makes `Machine` implementations thread-safe by design. A `MachineCore` must be serializable and deserialzable to enable shapshotting of a state machine. This is used by Raft to limit the log size.
+
+The `simple-raft-node` library provides a hashmap state machine which can be used to implement a distributed key-value store. As an experiment, a declarative approach for specifying a state machine was investigated. This approach used Rust's procedural macros to parse a state machine declaration. However, as Autobahnkreuz is only using a three lists to store all subscriptions, registrations, and sessions, this approach was abandoned. Instead, a `Machine` trait was implemented that enables the modification of the session list, and the subscription list. As Autobahnkreuz is not implementing remote procedure calls, the registration list is not implemented.
 
 ## Storing State
 
- * `Storage`
-    * easy interface to enable fast development of new storage implementations
-    * manages the raft-log
-    * appending and reading of the state changes
+When a state-change or membership change gets processed by the Raft consensus algorithm, a new log entry is produced. The log contains the history of all changes that were applied to the cluster. To prevent retransmitting the whole log when a node is starting up after a failure, the log can be persisted on disk. Storing the log in disk is also needed to prevent data loss when all nodes of a cluster have failed. The `raft-rs` library is proving a `Storage` trait for reading persisted entries from a log. However, it is also necessary to write new entries to disk after they got appended to the log. Therefore, `simple-raft-node` provides its own `Storage` trait that extends the `Storage` trait of `raft-rs` with writing capabilities. With this trait it is possible to easily implement new storage implementations for a Raft node.
+
  * Storage implementations
     * txfs (linux kernel module)
     * zboxfs (userland filesystem)
