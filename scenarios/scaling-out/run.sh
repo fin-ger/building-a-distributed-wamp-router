@@ -171,6 +171,6 @@ run() {
 }
 
 run autobahnkreuz
-run emitter
+#run emitter
 
 ./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
