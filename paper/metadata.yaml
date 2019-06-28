@@ -7,15 +7,13 @@ author:
     email: fin.christensen@st.ovgu.de
 keywords:
   - wamp
-  - consensus algorithm
-  - distributed applications
+  - distributed application
   - routing
+  - consensus algorithm
+  - cloud-native
 numbersections: yes
 lang: en
 babel-lang: english
 abstract: |
-  This is the abstract.
-
-  It consists of two paragraphs.
-
+  This work describes the design and implementation of a prototypical distributed routing implementation for Web-Application-Messaging-Protocol (WAMP) called Autobahnkreuz. The router is capable of running in a distributed setup where several instances of the routing application are running on multiple machines. The Raft consensus algorithm is used for synchronization of the state of each router instance. The performance of the implementation is compared against the service availability in a failure scenario, message throughput, and the resource usage.
 ...
