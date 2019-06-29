@@ -4,7 +4,7 @@ FILES = paper.md \
 OUTPUT = build
 
 FLAGS = --bibliography=bibliography.bib \
-		--csl=bibliography.csl \
+		--biblatex \
 		-s \
 		-f markdown
 
@@ -14,7 +14,11 @@ all: pdf
 
 pdf:
 	mkdir -p $(OUTPUT)
-	pandoc -o $(OUTPUT)/paper.pdf $(FLAGS) $(FLAGS_PDF) $(FILES)
+	pandoc -o $(OUTPUT)/paper.tex $(FLAGS) $(FLAGS_PDF) $(FILES)
+	pdflatex --output-directory $(OUTPUT) $(OUTPUT)/paper.tex
+	biber $(OUTPUT)/paper
+	pdflatex --output-directory $(OUTPUT) $(OUTPUT)/paper.tex
+	pdflatex --output-directory $(OUTPUT) $(OUTPUT)/paper.tex
 
 clean:
 	rm build/*

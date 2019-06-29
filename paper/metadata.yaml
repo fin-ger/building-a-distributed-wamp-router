@@ -12,6 +12,7 @@ keywords:
   - consensus algorithm
   - cloud-native
 numbersections: yes
+biblatex: yes
 lang: en
 babel-lang: english
 abstract: |
