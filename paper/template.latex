@@ -195,7 +195,7 @@ $endif$
 
 % set default figure placement to htbp
 \makeatletter
-\def\fps@figure{htbp}
+\def\fps@figure{t}
 \makeatother
 
 $for(header-includes)$
