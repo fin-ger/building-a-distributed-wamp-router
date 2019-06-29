@@ -36,7 +36,7 @@ script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push fin1ger/building-a-distributed-wamp-router:scenario-scaling-out-mqtt
 
-  - docker run -it --rm -v "$(pwd):/data" aergus/latex -c "cd paper && make pdf"
+  - docker run -it --rm -v "$(pwd):/data" aergus/latex /bin/bash -c "cd /data/paper && make pdf"
 
 before_deploy:
   - git tag -f travis-dev-build
