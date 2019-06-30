@@ -16,5 +16,5 @@ biblatex: yes
 lang: en
 babel-lang: english
 abstract: |
-  This work describes the design and implementation of the Autobahnkreuz prototypical distributed routing application for the Web-Application-Messaging-Protocol (WAMP). The router is capable of running in a distributed setup where several instances of the routing application are running on multiple machines. The Raft consensus algorithm is used for synchronization of the state of each router instance. The performance of the implementation is compared against the service availability in a failure scenario, message throughput, and the resource usage.
+  This work describes the design and implementation of the Autobahnkreuz prototypical distributed routing application for the Web-Application-Messaging-Protocol (WAMP). The router is capable of running in a distributed setup where several instances of the routing application are running on multiple machines. The Raft consensus algorithm is used for synchronization of the state of each router instance. The performance of the implementation is compared against other implementations based on the service availability in a failure scenario, the message throughput, and the resource usage.
 ...
