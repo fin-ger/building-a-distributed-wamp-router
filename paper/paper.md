@@ -1,42 +1,20 @@
 # Introduction
 
-For modern web pages the importance of realtime data delivery rose during the last years. This created new requirements for web applications especially where server rendered content was previously used[@RFC6202]. Technologies like AJAX, JSON-RPC, socket.io, WebSockets, and many more arose to fit the needs for realtime data delivery to the web browser. During the same time micro-services gained importance in the server backend to create scalable and robust applications. A micro-service is a minimalistic application for a single responsibility. A distributed application can be created by interconnecting the micro-services. Technologies supporting the development of micro-service infrastructures arose like gRPC, Cap'n Proto, Apache Thrift, Java RMI, and many more. As well as the web technologies, the micro-services needed realtime communication between application components on different machines.
+For modern web pages the importance of realtime data delivery rose during the last years. This created new requirements for web applications especially where server rendered content was previously used[@RFC6202]. Technologies like AJAX, JSON-RPC, socket.io, WebSockets, and many more arose to fit the needs for realtime data delivery to the web browser[??]. During the same time micro-services gained importance in the server backend to create scalable and robust applications[??]. A micro-service is a minimalistic application for a single responsibility. A distributed application can be created by interconnecting the micro-services. Technologies supporting the development of micro-service infrastructures arose like gRPC, Cap'n Proto, Apache Thrift, Java RMI, and many more[??]. As well as the web technologies, the micro-services needed realtime communication between application components on different machines.
 
-In the year 2012 WAMP (Web-Application-Messaging-Protocol) appeared as an open and free protocol which combines the requirements of a micro-service infrastructure with modern web technologies, providing a single solution for frontend and backend application development[@WAMP:2019]. It implements a publish and subscribe messaging pattern as well as routed remote procedure calls (RPCs). This enables application developers to use a unified interconnect between application components for two different messaging patterns. The protocol was primarily built on top of WebSockets[@WAMP:2019] which enables web pages inside the web browser to participate as part of the micro-service infrastructure. This makes it considerably easier for a web-page to communicate with the backend in realtime. Currently the protocol also supports other transportation layers beside WebSockets, which makes the protocol more flexible in backend application development.
+In the year 2012 WAMP (Web-Application-Messaging-Protocol) appeared as an open and free protocol which combines the requirements of a micro-service infrastructure with modern web technologies, providing a single solution for frontend and backend application development[@WAMP:2019]. It implements a publish and subscribe messaging pattern as well as routed remote procedure calls (RPCs). This enables application developers to use a unified interconnect between application components for two different messaging patterns. The protocol was primarily built on top of WebSockets[@WAMP:2019] which enables web pages inside the web browser to participate as part of the micro-service infrastructure. This makes it considerably easier for a web-page to communicate with the backend in realtime[??]. Currently the protocol also supports other transportation layers beside WebSockets, which makes the protocol more flexible in backend application development.
 
-WAMP requires a central server where all services (backend and frontend) are connected to. The server then routes topic publications and remote procedure calls to these services (clients). The applications built on this technology are implemented as components that are distributed over multiple machines that communicate with each other via WAMP. This can enable an application to be resistant against local machine failures as other machines are still hosting the application on a different location. The reference implementation router (Crossbar from Crossbar.io Technologies GmbH) runs as a single server instance on a single machine. This introduces a single-point-of-failure to a technology that was designed to be resistant against local machine failures. To counteract this, crossbar.io provides a closed-source commercial router implementation (CrossbarFX) that implements a logically central router which is physically distributed over multiple machines. There are other router implementations that also support distributing the routing application over multiple physical machines, like Bondy which is developed by Leapsight.
+# Limitations of WAMP
 
-This paper will describe the design and prototypical implementation of the Autobahnkreuz distributed WAMP routing application. The implementation will contain the publish and subscribe messaging pattern of the protocol only. However, the design will take remote procedure calls into consideration to enable the implementation of the complete base profile in a later work. The resulting routing application will be compared to the Crossbar reference implementation and to an existing cloud-native message routing application which implements the MQTT messaging protocol. The deployment size, memory usage, the message processing latency, and the availability of the routing service in a failure scenario will be compared as well as the scalability of the service when scaling the routing instances horizontally. 
+WAMP requires a central server where all services (backend and frontend) are connected to. The server then routes topic publications and remote procedure calls to these services (clients). The applications built on this technology are implemented as components that are distributed over multiple machines that communicate with each other via WAMP. This can enable an application to be resistant against local machine failures as other machines are still hosting the application on a different location. The reference implementation router (Crossbar from Crossbar.io Technologies GmbH) runs as a single server instance on a single machine. This introduces a single-point-of-failure to a technology that was designed to be resistant against local machine failures.
 
-# Sharing State
+Additionally, the routing performance is limited to the execution performance of the single host machine. When the hosts performance is too slow to handle the routing requirements of an application, the only solution is to replace the hardware of the host machine with faster alternatives. This is called scaling-up or vertical scaling. With a distributed routing application it is possible to horizontally scale or scale-out the system. This involves integrating more physical machines into the system, balancing the routing over all machines in the system. This adds an additional possibility for performance scaling to the application.
 
-The central problem when implementing a distributed application is sharing the state of one instance of the application (replica) to all other instances. The state of an application is the data that is needed for the application to define its behavior. When the state of a single application with several replicas gets out of sync, the behavior of an individual replica may differ from the behavior of other replicas. This can lead to severe damage of the underlying data, downtimes for the provided services, and even data leaks which may penetrate the security of a server.
+# A Decentralized WAMP Router
 
-## Existing Solutions
+The central problem when implementing a distributed application is sharing the state of one instance of the application to all other instances. One instance in a distributed application is called replica. The state of an application is the data that is needed for the application to define its behavior. When the state of a single application with several replicas gets out-of-sync, the behavior of an individual replica may differ from the behavior of other replicas. This can lead to severe damage of the underlying data, downtimes for the provided services, and even data leaks which may penetrate the security of a server.
 
-A possible solution to this problem is to manage the data outside of the application and let another application handle the state synchronization. There are several applications available that can manage data over multiple machines. Most notably distributed databases, key-value stores, and filesystems.
-
-### Distributed Databases and Key-Value Stores
-
-Databases and key-value stores provide a logically centralized view when accessing the stored data. This enables applications to be implemented as stateless services, that ask at the central database for the current state of the application. By storing no state in the application itself, it can be replicated by just starting several instances of the application. This works because all replicas of the application are accessing the application state via the central database. The database implementation is then responsible for distributing the state over multiple machines. There are several distributed databases available that provide exactly this functionality. E.g. PostgreSQL, MariaDB, etcd, and TiKV/TiDB.
-
-### Distributed Filesystems
-
-A distributed filesystem is a filesystem that runs on multiple machines at the same time. The files available on the filesystem are the same on every machine. When changing the files, the changes take effect on every machine that is part of the distributed filesystem. Distributed filesystems are very good at synchronizing large quantities of data between multiple machines. Examples are GlusterFS, Ceph, BeeGFS, HDFS, and AFS.
-
-### Consensus Algorithms
-
-To prevent state inconsistencies between replicas, consensus algorithms can be used to synchronize data between machines. To change the state in a cluster of multiple machines, a consensus must be reached. This can be implemented by starting an election for a state-change. The machines in the cluster must vote in the election for the state-change. A majority of the machines has to approve the state-change to take effect. Otherwise, the state-change gets rejected and a new election must be started. To prevent elections for every state-change, algorithms exist that install a leader in the cluster which is exclusively granted the right to change the state of the cluster. The leader gets elected by the cluster members when no leader is known by the members. All other members of the cluster enter a follower state, where the state changes of the leader are followed. When a follower receives a request to change the state, it has to forward the state-change to the current leader.
-
-## Other Implementations
-
-There are existing WAMP router implementations that provide cloud-native functionality. CrossbarFX is a commercial routing application by the Crossbar.io GmbH which provides cloud and large-scale routing for enterprise applications[@CFX:2019]. The router consists of two components: CrossbarFX Edge and CrossbarFX Master. The former provides local routing capabilities and edge application component management. CrossbarFX Master provides large-scale routing by connecting multiple master and edge instances.
-
-Bondy is another open source WAMP routing application written in Erlang that provides horizontal scaling. It is developed by Leapsight and uses the Partisan library for cluster membership management, Plumtree for epidemic broadcasting, and an eventual consistent data store. The application is currently under active development. At this point there exists no release of Bondy.
-
-When not focusing on the WAMP protocol, there exist many cloud-native message routing applications. Emitter is an open source MQTT routing application written in the Go programming language. It uses the Mesh library by Weaveworks to implement a highly available and partition tolerant routing application for the internet of things. MQTT is a protocol for the publish and subscribe messaging pattern which is heavily used in the internet of things. Emitter uses similar technologies to Bondy and can be used for performance comparisons when investigating publish and subscribe functionalities.
-
-## State of a Router
+## State of a WAMP Router
 
 In a setup where a WAMP router is distributed over multiple machines, the routing information for messages has to be synchronized between the router replicas. The routing information for a WAMP router consists of the following parts:
 
@@ -52,7 +30,33 @@ When a client connected to the WAMP router initiates a remote procedure call (RP
 
 As not all clients of a router are connected to the same replica, the replicas must know which replica is connected to which client. This information is used by the router to forward messages to the correct replica, so that a message reaches the desired client.
 
-## Data Transport
+## Other Implementations
+
+There are existing WAMP router implementations that provide cloud-native functionality. CrossbarFX is a commercial routing application by the Crossbar.io GmbH which provides cloud and large-scale routing for enterprise applications[@CFX:2019]. The router consists of two components: CrossbarFX Edge and CrossbarFX Master. The former provides local routing capabilities and edge application component management. CrossbarFX Master provides large-scale routing by connecting multiple master and edge instances.
+
+Bondy is another open source WAMP routing application written in Erlang that provides horizontal scaling. It is developed by Leapsight and uses the Partisan library for cluster membership management, Plumtree for epidemic broadcasting, and an eventual consistent data store. The application is currently under active development[??]. At this point there exists no release of Bondy.
+
+When not focusing on the WAMP protocol, there exist many cloud-native message routing applications. Emitter is an open source MQTT routing application written in the Go programming language. It uses the Mesh library by Weaveworks to implement a highly available and partition tolerant routing application for the internet of things[??]. MQTT is a protocol for the publish and subscribe messaging pattern which is heavily used in the internet of things[??]. Emitter uses similar technologies to Bondy and can be used for performance comparisons when investigating publish and subscribe functionalities.
+
+This paper will describe the design and prototypical implementation of the Autobahnkreuz distributed WAMP routing application. The implementation will contain the publish and subscribe messaging pattern of the protocol only. However, the design will take remote procedure calls into consideration to enable the implementation of the complete base profile in a later work. The resulting routing application will be compared to the Crossbar reference implementation and to an existing cloud-native message routing application which implements the MQTT messaging protocol. The deployment size, memory usage, and the message processing latency will be compared as well as the scalability of the service when scaling the routing instances horizontally. 
+
+# Background
+
+A possible solution for sharing the state over multiple replicas is to manage the data outside of the application and let another application handle the state synchronization. There are several applications available that can manage data over multiple machines. Most notably distributed databases, key-value stores, and filesystems.
+
+## Distributed Databases and Key-Value Stores
+
+Databases and key-value stores provide a logically centralized view when accessing the stored data[??]. This enables applications to be implemented as stateless services, that ask at the central database for the current state of the application. By storing no state in the application itself, it can be replicated by just starting several instances of the application. This works because all replicas of the application are accessing the application state via the central database. The database implementation is then responsible for distributing the state over multiple machines. There are several distributed databases available that provide exactly this functionality. E.g. PostgreSQL, MariaDB, etcd, and TiKV/TiDB[??].
+
+## Distributed Filesystems
+
+A distributed filesystem is a filesystem that runs on multiple machines at the same time. The files available on the filesystem are the same on every machine. When changing the files, the changes take effect on every machine that is part of the distributed filesystem. Distributed filesystems are very good at synchronizing large quantities of data between multiple machines[??]. Examples are GlusterFS, Ceph, BeeGFS, HDFS, and AFS[??].
+
+## Consensus Algorithms
+
+To prevent state inconsistencies between replicas, consensus algorithms can be used to synchronize data between machines. To change the state in a cluster of multiple machines, a consensus must be reached. This can be implemented by starting an election for a state-change. The machines in the cluster must vote in the election for the state-change. A majority of the machines has to approve the state-change to take effect. Otherwise, the state-change gets rejected and a new election must be started. To prevent elections for every state-change, algorithms exist that install a leader in the cluster which is exclusively granted the right to change the state of the cluster. The leader gets elected by the cluster members when no leader is known by the members. All other members of the cluster enter a follower state, where the state changes of the leader are followed. When a follower receives a request to change the state, it has to forward the state-change to the current leader[??].
+
+# Solution Concept
 
 Besides the state needed for the routing, there is other data that must be transferred between router replicas. Publications and procedure calls contain a message body in which parameters and payloads are stored. When forwarding a publication or procedure call to another client, this data must be potentially transferred to another replica. The frequency and size of a topic publication payload can get quite high. Therefore it is undesirable to initiate a state change for publications and RPCs. Instead of routing every publications and RPC over the leader of the cluster, the payload can be transferred directly between the replicas that manage affected clients. This is possible as neither publications nor RPCs contain information that is relevant for the routing.
 
@@ -102,7 +106,9 @@ Autobahnkreuz was deployed in Kubernetes where a domain name service (DNS) is us
 
 The WAMP protocol implementation was taken from an existing WAMP routing application called Wampire. The remote procedure call implementation was removed from the source code, and the state management for subscriptions and sessions was moved to a central instance. A serialization and deserialization based on `msgpack` was implemented for the data objects needed for subscription and session management. To enable the synchronization of this data between multiple nodes, the `Machine` and `MachineCore` traits were implemented. These implementations are passed to a `Node` instance during the startup of the WAMP router enabling state synchronization via the Raft consensus algorithm. Autobahnkreuz is successfully using the `simple-raft-node` library to convert Wampire into a distributed WAMP routing application.
 
-# Deployment
+# Validation
+
+## Test Setup
 
 The network setup for Autobahnkreuz is more complex than other single-node router network setups. To reduce the network administration tasks when deploying an instance of Autobahnkreuz, a Kubernetes deployment was implemented. Kubernetes provides a declarative language for network and configuration setups of docker containers. By using Kubernetes for the network setup, the deployment gets reproducible and scalable. Docker containers are used to isolate the application components from the host operating system. Each docker container has its own root filesystem with its own GNU/Linux distribution. Containers only share the operating system kernel with the host system and other containers. To make communication with other containers possible, filesystem entries and network ports can be exposed by a container[@DOCKER:2019]. For Autobahnkreuz only two TCP ports are exposed.
 
@@ -110,11 +116,11 @@ A process from within a Docker container cannot access data outside the containe
 
 In order to connect all router replicas with each other, the leader tells all other replicas behind which domain or IP each replica is running. Kubernetes uses a domain name service (DNS) to resolve domains inside the cluster for each replica. Additionally, when launching a new replica, these domain names can be used to initiate an initial connection with the cluster. However, during the development of the Kubernetes deployment, a bug[^coredns-bug] was found in the DNS of Kubernetes (coredns). The bug is appearing within the first 30 seconds after startup of a replica. During these 30 seconds, new domain names will sometimes result in `NXDOMAIN` or `REFUSED`. This leads to an unstable startup of new replicas. The bug is reported upstream and confirmed. Autobahnkreuz resolves this issue by issuing DNS lookups until the lookup succeeds.
 
-# Evaluation
+## Performance
 
 Autobahnkreuz was implemented as a prototypical implementation to prove the feasibility of a distributed WAMP routing application. It was planned to have incomplete WAMP protocol support and expected to be inferior to existing cloud-native routing applications. Five scenarios were designed to evaluate the success of this project by comparing Autobahnkreuz to Crossbar and Emitter. The scenarios take the previously set goals for this project into account. A virtual machine hosted by VirtualBox where a `k3s` Kubernetes setup was running with 8 gigabytes of RAM and one CPU core was used to execute the scenarios. The virtual machine was running on an Intel Core i7-6700HQ host CPU.
 
-## Container Size
+### Container Size
 
 ![The container size scenario compares the size of the latest Docker image from Docker Hub\label{containersize}](../scenarios/container-size/plots/2019-06-16T17:58:45+02:00-scenario-pod-size.png)
 
@@ -122,13 +128,15 @@ The container size is an indicator for the attack surface of a container. The lo
 
 The container size scenario (Figure \ref{containersize}) checks the size of the latest docker container that is provided on the Docker Hub. Docker Hub is a central registry for docker containers. Autobahnkreuz is not using a GNU/Linux distribution at all, instead a single statically linked binary is contained in the container. Emitter's Docker containers are based on a Linux distribution that is not using the GNU tools and instead is using Musl libc and Busybox. Alpine is a focused on security while being a lightweight Linux distribution that is often used for docker deployment due to the small footprint[@ALPINE:2018]. Crossbar's docker containers are based on the Debian GNU/Linux distribution which accounts for the large container size. Crossbar does not include the complete userland of Debian but a trimmed down version called `debian-slim` which omits documentation files and other optional resources when installing new packages.
 
-## RAM Usage
+### RAM Usage
 
 ![The RAM usage scenario measures the overall memory consumption of the routers while 10 clients are communicating over the routers\label{ramusage}](../scenarios/ram-usage/plots/2019-06-17T12:09:43+02:00-scenario-ram-usage.png)
 
 When running multiple instances of a single application inside a cluster environment it is preferable to have a low memory footprint to reduce additional costs associated with the scaling of application instances. The RAM usage scenario (Figure \ref{ramusage}) measures the total memory consumption of all replicas where five replicas of Emitter and Autobahnkreuz were running. Crossbar was running as a single instance as the open source version does not support running replicas. During the scenario 10 clients were sending and receiving topic publications every 100 milliseconds. Autobahnkreuz shows the lowest memory consumption, which was expected as Rust uses manual memory management without a garbage collection. Emitter is written in the Go programming language and therefore uses a garbage collection for memory management. The highest memory consumption is observed from Crossbar. Crossbar is written in Python where the source code has to be interpreted at runtime. Therefore the memory consumption is considerably higher.
 
-## High Message Throughput
+> TODO: increase clients gradually to see impact on memory consumption
+
+### High Message Throughput
 
 ![The high message troughput scenario lets 10 clients publish topics as fast as possible to all other clients. The latency until a publication is singaled as published is measured.\label{highload}](../scenarios/high-load/plots/2019-06-17T14:19:34+02:00-scenario-high-load.png)
 
@@ -136,15 +144,9 @@ The high message throughput scenario (Figure \ref{highload}) measures the latenc
 
 A higher latency for topic publications is expected from routers running in replicated setups as messages may get routed to other physical machines. However, Autobahnkreuz has about the same response time as Crossbar. By using a programming language that is compiling to native code, Autobahnkreuz counteracts the drawbacks of running in a replicated setup when compared to Crossbar. The source for the higher latency of publication responses in Emitter can be due to the use of a different client library implementation.
 
-## Availability
+> TODO: increase clients gradually to see impact on throughput
 
-![The availability scenario lets a random router replica fail every 30 seconds while 10 clients are continuously trying to get a connection to the router\label{availability}](../scenarios/availability/plots/2019-06-16T18:35:30+02:00-scenario-availability.png)
-
-When running a distributed application inside a cluster setup, failures of single replicas should not affect the availability of the provided service as other replicas can take over the traffic of the failed node. The cluster orchestrator can then launch a new replica to replace the failed one. The availability scenario (Figure \ref{availability}) tests if the routing service stays available if replicas are failing. For this scenario, routers that support replication were running with five replicas. To check the availability, 10 clients are each trying to connect to the router every second. The test kills a random replica every 30 seconds and waits until the deletion of the replica has finished.
-
-Emitter is handling the replica failures flawlessly, while Crossbar is unavailable every 30 seconds. This is expected as Crossbar is running as a single application instance. Autobahnkreuz however crashes after 10 seconds into the test as new members in the routing cluster are accepting connections while not synchronized to the cluster. The new router is then trying to commit a state-change proposal which will most likely be accepted. However, to the time the state-change commit is received by the new replica, the connection of the client has timed out. The timeout occurs because each new router must catch up with the log of the cluster which takes some time. Additionally, the new member is following old log entries where other nodes may have been leader of the cluster. As they may not be leader any more, heartbeat messages are not received. The new node assumes that the leader has failed and starts a new leader election. This destabilizes the cluster and causes the replicas to be unresponsive to client connections. The autobahnkreuz implementation fails to provide the expected availability! As this bug is caused by a misbehaving implementation and has not its cause in the design of the router, it can be fixed by checking the progress of the synchronization of new replicas. Additionally, a readiness probe must be installed to inform Kubernetes about the ability of a replica to accept connections.
-
-## Scaling-Out
+### Scaling-Out
 
 ![The Autobahnkreuz WAMP router running the scaling-out scenario as described in the [Scaling-Out](#scaling-out) chapter.\label{scalingoutautobahnkreuz}](../scenarios/scaling-out/plots/2019-06-26T10:37:39+02:00-scenario-scaling-out-autobahnkreuz.png)
 
@@ -164,7 +166,7 @@ The project is considered to be a success. The complete source code of this work
 
 # Future Work
 
-It is planned to continue the development of the Autobahnkreuz routing application. The development will focus on fixing the availability issue described in this work and completing the WAMP base profile by supporting remote procedure call routing. Additionally, the connection management algorithms of the `simple-raft-node` library can be moved to a new library, making the reuse of this code easier in other projects.
+It is planned to continue the development of the Autobahnkreuz routing application. The development will focus on fixing the avail1ability issue described in this work and completing the WAMP base profile by supporting remote procedure call routing. Additionally, the connection management algorithms of the `simple-raft-node` library can be moved to a new library, making the reuse of this code easier in other projects.
 
 For real-world applications, the WAMP specification includes extensions to the protocol which introduce new mechanisms and APIs besides the publish/subscribe and remote procedure call messaging patterns. This makes the existing routing applications very complex and hard to maintain. To counteract this, all extensions to the base WAMP profile can be implemented as plugins to the router. A plugin API for a distributed application where the plugins have to manage their state over multiple machines can be designed as a follow-up work. Autobahnkreuz would then be capable of serving subsets of the advanced WAMP profile on demand. This is especially beneficial for a distributed routing application as only the state of WAMP features which the user is actually using must to be synchronized between router replicas. This can lower the amount of data that is synchronized in the cluster for a specific micro-service application.
 
