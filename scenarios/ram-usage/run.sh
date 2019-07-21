@@ -118,7 +118,8 @@ kill_random_pod() {
 
 run() {
     ROUTER="$1"
-    TOKEN="$(kubectl get secret -n kube-system admin-token-9264c -o json | jq -r .data.token | base64 -d)"
+    CLUSTER_IP="116.203.84.181"
+    TOKEN="$(kubectl get secret -n kube-system cluster-admin-token-8hbgk -o json | jq -r .data.token | base64 -d)"
 
     case "${ROUTER}" in
         autobahnkreuz)
@@ -135,7 +136,7 @@ run() {
                 CSV="plots/${TIMESTAMP}-${SCENARIO}-autobahnkreuz.csv"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
-                    curl --insecure -H "Authorization: Bearer $TOKEN" https://localhost:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=autobahnkreuz | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
+                    curl --insecure -H "Authorization: Bearer $TOKEN" https://$CLUSTER_IP:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=autobahnkreuz | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
                     sleep 1
                 done
 
@@ -159,7 +160,7 @@ run() {
                 CSV="plots/${TIMESTAMP}-${SCENARIO}-crossbar.csv"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
-                    curl --insecure -H "Authorization: Bearer $TOKEN" https://localhost:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=crossbar | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
+                    curl --insecure -H "Authorization: Bearer $TOKEN" https://$CLUSTER_IP:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=crossbar | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
                     sleep 1
                 done
 
@@ -183,7 +184,7 @@ run() {
                 CSV="plots/${TIMESTAMP}-${SCENARIO}-emitter.csv"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
-                    curl --insecure -H "Authorization: Bearer $TOKEN" https://localhost:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=emitter | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
+                    curl --insecure -H "Authorization: Bearer $TOKEN" https://$CLUSTER_IP:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=emitter | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
                     sleep 1
                 done
 
