@@ -36,18 +36,14 @@ async function main() {
     );
 
     let msgs = 0;
-    let latency = 0;
 
     setInterval(() => {
-        console.log(`${getTimestamp()},${hostname},${latency / msgs}`);
+        console.log(`${hostname},${getTimestamp()},${msgs}`);
         msgs = 0;
-        latency = 0;
     }, 1000);
 
     setInterval(async () => {
-        const timestamp = getTimestamp();
         await connection.Publish('scenario.high_load');
-        latency += getTimestamp() - timestamp;
         msgs += 1;
     }, 0);
 }

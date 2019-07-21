@@ -73,7 +73,10 @@ wamp_up() {
 
         # it does not matter when this fails
         helm delete --purge "${SCENARIO}" || true
-        helm install --set "routerAddress=${WAMP_ADDRESS}" --name "${SCENARIO}" . \
+        helm install \
+             --set "routerAddress=${WAMP_ADDRESS}" \
+             --set "replicaCount=$2" \
+             --name "${SCENARIO}" . \
             || fail "failed to install ${SCENARIO} chart"
     )
 }
@@ -91,7 +94,10 @@ mqtt_up() {
 
         # it does not matter when this fails
         helm delete --purge "${SCENARIO}" || true
-        helm install --set "routerAddress=${MQTT_ADDRESS}" --name "${SCENARIO}" . \
+        helm install \
+             --set "routerAddress=${MQTT_ADDRESS}" \
+             --set "replicaCount=$2" \
+             --name "${SCENARIO}" . \
             || fail "failed to install ${SCENARIO} chart"
     )
 }
@@ -116,62 +122,74 @@ run() {
 
     case "${ROUTER}" in
         autobahnkreuz)
-            autobahnkreuz_up
-            sleep 10
-            wamp_up "ws://autobahnkreuz:80"
-            sleep 60
-
             mkdir -p plots
-            LENGTH="$(date -d "now +5 min" +%s)"
-            CSV="plots/${TIMESTAMP}-${SCENARIO}-autobahnkreuz.csv"
-            while [ "${LENGTH}" -ge "$(date +%s)" ]
-            do
-                curl --insecure -H "Authorization: Bearer $TOKEN" https://localhost:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=autobahnkreuz | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
-                sleep 1
-            done
 
-            wamp_down
-            autobahnkreuz_down
+            for i in 4 8 12 16 20
+            do
+                autobahnkreuz_up
+                sleep 10
+                wamp_up "ws://autobahnkreuz:80" $i
+                sleep 60
+
+                LENGTH="$(date -d "now +5 min" +%s)"
+                CSV="plots/${TIMESTAMP}-${SCENARIO}-autobahnkreuz.csv"
+                while [ "${LENGTH}" -ge "$(date +%s)" ]
+                do
+                    curl --insecure -H "Authorization: Bearer $TOKEN" https://localhost:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=autobahnkreuz | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
+                    sleep 1
+                done
+
+                wamp_down
+                autobahnkreuz_down
+            done
 
             return
             ;;
         crossbar)
-            crossbar_up
-            sleep 10
-            wamp_up "ws://crossbar:80/ws"
-            sleep 60
-
             mkdir -p plots
-            LENGTH="$(date -d "now +5 min" +%s)"
-            CSV="plots/${TIMESTAMP}-${SCENARIO}-crossbar.csv"
-            while [ "${LENGTH}" -ge "$(date +%s)" ]
-            do
-                curl --insecure -H "Authorization: Bearer $TOKEN" https://localhost:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=crossbar | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
-                sleep 1
-            done
 
-            wamp_down
-            crossbar_down
+            for i in 4 8 12 16 20
+            do
+                crossbar_up
+                sleep 10
+                wamp_up "ws://crossbar:80/ws" $i
+                sleep 60
+
+                LENGTH="$(date -d "now +5 min" +%s)"
+                CSV="plots/${TIMESTAMP}-${SCENARIO}-crossbar.csv"
+                while [ "${LENGTH}" -ge "$(date +%s)" ]
+                do
+                    curl --insecure -H "Authorization: Bearer $TOKEN" https://localhost:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=crossbar | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
+                    sleep 1
+                done
+
+                wamp_down
+                crossbar_down
+            done
 
             return
             ;;
         emitter)
-            emitter_up
-            sleep 10
-            mqtt_up "ws://emitter:80"
-            sleep 60
-
             mkdir -p plots
-            LENGTH="$(date -d "now +5 min" +%s)"
-            CSV="plots/${TIMESTAMP}-${SCENARIO}-emitter.csv"
-            while [ "${LENGTH}" -ge "$(date +%s)" ]
-            do
-                curl --insecure -H "Authorization: Bearer $TOKEN" https://localhost:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=emitter | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
-                sleep 1
-            done
 
-            mqtt_down
-            emitter_down
+            for i in 4 8 12 16 20
+            do
+                emitter_up
+                sleep 10
+                wamp_up "ws://emitter:80" $i
+                sleep 60
+
+                LENGTH="$(date -d "now +5 min" +%s)"
+                CSV="plots/${TIMESTAMP}-${SCENARIO}-emitter.csv"
+                while [ "${LENGTH}" -ge "$(date +%s)" ]
+                do
+                    curl --insecure -H "Authorization: Bearer $TOKEN" https://localhost:6443/apis/metrics.k8s.io/v1beta1/namespaces/default/pods\?labelSelector\=app.kubernetes.io/name\=emitter | jq -r ".items[] | \"$(date +%s),\(.metadata.name),\(.containers[0].usage.memory)\"" >> "${CSV}"
+                    sleep 1
+                done
+
+                wamp_down
+                emitter_down
+            done
 
             return
             ;;

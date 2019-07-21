@@ -73,7 +73,10 @@ wamp_up() {
 
         # it does not matter when this fails
         helm delete --purge "${SCENARIO}" || true
-        helm install --set "routerAddress=${WAMP_ADDRESS}" --name "${SCENARIO}" . \
+        helm install \
+             --set "routerAddress=${WAMP_ADDRESS}" \
+             --set "replicaCount=$2" \
+             --name "${SCENARIO}" . \
             || fail "failed to install ${SCENARIO} chart"
     )
 }
@@ -91,7 +94,10 @@ mqtt_up() {
 
         # it does not matter when this fails
         helm delete --purge "${SCENARIO}" || true
-        helm install --set "routerAddress=${MQTT_ADDRESS}" --name "${SCENARIO}" . \
+        helm install \
+             --set "routerAddress=${MQTT_ADDRESS}" \
+             --set "replicaCount=$2" \
+             --name "${SCENARIO}" . \
             || fail "failed to install ${SCENARIO} chart"
     )
 }
@@ -115,71 +121,89 @@ run() {
 
     case "${ROUTER}" in
         autobahnkreuz)
-            autobahnkreuz_up
-            sleep 10
-            wamp_up "ws://autobahnkreuz:80"
-            sleep 60
-
-            LENGTH="$(date -d "now +5 min" +%s)"
-            while [ "${LENGTH}" -ge "$(date +%s)" ]
-            do
-                sleep 1
-            done
-
             mkdir -p plots
-            kubectl logs \
-                    --selector "app.kubernetes.io/name=${SCENARIO}" \
-                    --max-log-requests 100 \
-                    --tail 9223372036854775807 > "plots/${TIMESTAMP}-${SCENARIO}-autobahnkreuz.csv"
 
-            wamp_down
-            autobahnkreuz_down
+            for i in 4 8 12 16 20
+            do
+                autobahnkreuz_up
+                sleep 10
+                wamp_up "ws://autobahnkreuz:80" $i
+                sleep 60
+
+                SINCE="$(date --iso-8601=seconds)"
+                LENGTH="$(date -d "now +5 min" +%s)"
+                while [ "${LENGTH}" -ge "$(date +%s)" ]
+                do
+                    sleep 1
+                done
+
+                kubectl logs \
+                        --since-time "${SINCE}" \
+                        --selector "app.kubernetes.io/name=${SCENARIO}" \
+                        --max-log-requests 100 \
+                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-autobahnkreuz.csv"
+
+                wamp_down
+                autobahnkreuz_down
+            done
 
             return
             ;;
         crossbar)
-            crossbar_up
-            sleep 10
-            wamp_up "ws://crossbar:80/ws"
-            sleep 60
-
-            LENGTH="$(date -d "now +5 min" +%s)"
-            while [ "${LENGTH}" -ge "$(date +%s)" ]
-            do
-                sleep 1
-            done
-
             mkdir -p plots
-            kubectl logs \
-                    --selector "app.kubernetes.io/name=${SCENARIO}" \
-                    --max-log-requests 100 \
-                    --tail 9223372036854775807 > "plots/${TIMESTAMP}-${SCENARIO}-crossbar.csv"
 
-            wamp_down
-            crossbar_down
+            for i in 4 8 12 16 20
+            do
+                crossbar_up
+                sleep 10
+                wamp_up "ws://crossbar:80/ws" $i
+                sleep 60
+
+                SINCE="$(date --iso-8601=seconds)"
+                LENGTH="$(date -d "now +5 min" +%s)"
+                while [ "${LENGTH}" -ge "$(date +%s)" ]
+                do
+                    sleep 1
+                done
+
+                kubectl logs \
+                        --since-time "${SINCE}" \
+                        --selector "app.kubernetes.io/name=${SCENARIO}" \
+                        --max-log-requests 100 \
+                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-crossbar.csv"
+
+                wamp_down
+                crossbar_down
+            done
 
             return
             ;;
         emitter)
-            emitter_up
-            sleep 10
-            mqtt_up "ws://emitter:80"
-            sleep 60
-
-            LENGTH="$(date -d "now +5 min" +%s)"
-            while [ "${LENGTH}" -ge "$(date +%s)" ]
-            do
-                sleep 1
-            done
-
             mkdir -p plots
-            kubectl logs \
-                    --selector "app.kubernetes.io/name=${SCENARIO}" \
-                    --max-log-requests 100 \
-                    --tail 9223372036854775807 > "plots/${TIMESTAMP}-${SCENARIO}-emitter.csv"
 
-            mqtt_down
-            emitter_down
+            for i in 4 8 12 16 20
+            do
+                emitter_up
+                sleep 10
+                mqtt_up "ws://emitter:80" $i
+                sleep 60
+
+                SINCE="$(date --iso-8601=seconds)"
+                LENGTH="$(date -d "now +5 min" +%s)"
+                while [ "${LENGTH}" -ge "$(date +%s)" ]
+                do
+                    sleep 1
+                done
+
+                kubectl logs \
+                        --since-time "${SINCE}" \
+                        --selector "app.kubernetes.io/name=${SCENARIO}" \
+                        --max-log-requests 100 \
+                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-emitter.csv"
+
+                mqtt_down
+                emitter_down
+            done
 
             return
             ;;
