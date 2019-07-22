@@ -114,7 +114,7 @@ run() {
             do
                 autobahnkreuz_up $i
                 sleep 10
-                wamp_up "ws://autobahnkreuz:80" $((i * 2))
+                wamp_up "ws://autobahnkreuz:80" 100
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
@@ -143,7 +143,7 @@ run() {
             do
                 emitter_up $i
                 sleep 10
-                mqtt_up "ws://emitter:80" $((i * 2))
+                mqtt_up "ws://emitter:80" 100
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
@@ -171,6 +171,6 @@ run() {
 }
 
 run autobahnkreuz
-#run emitter
+run emitter
 
 ./plot.py "plots/${TIMESTAMP}-${SCENARIO}"

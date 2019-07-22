@@ -40,16 +40,15 @@ for idx, filename in enumerate(glob.glob(path + "-*.csv")):
         whis=[0, 100]
     )
     set_box_color(bplot, "C{}".format(idx))
+    plt.plot([], c="C{}".format(idx), label=router)
 
-plt.plot([], c='C0', label='Autobahnkreuz')
-plt.plot([], c='C1', label='Emitter')
 plt.legend()
 
-ticks = ["{}:{}".format(i, i*2) for i in range(1, 11)]
+ticks = ["{}".format(i) for i in range(1, 11)]
 plt.xticks(range(0, len(ticks) * 2, 2), ticks)
 plt.xlim(-2, len(ticks) * 2)
 plt.title('messages per second for several router and client configurations')
-plt.xlabel('router instances : clients connected')
+plt.xlabel('router instances')
 plt.ylabel('messages per second per client')
 plt.ylim((0, 1000))
 plt.savefig("{}.png".format(path))

@@ -20,8 +20,10 @@ plt.title('RAM usage scenario')
 plt.xlabel('clients connected to the router')
 plt.ylabel('RAM usage in MiB')
 
-for filename in glob.glob(path + "-*.csv"):
-    router = re.match(".*-(\w+).csv", filename).group(1)
+for idx, filename in enumerate(glob.glob(path + "-*.csv")):
+    router = re.match(r".*-(\w+).csv", filename).group(1)
+
+    plt.plot([], c='C{}'.format(idx), label=router)
 
     data = np.genfromtxt(filename, delimiter=',', names=['time', 'name', 'ram'], dtype=None)
     rel = data['time'][0]
@@ -36,9 +38,9 @@ for filename in glob.glob(path + "-*.csv"):
 
     last_time = times[0]
     segments = [0]
-    for idx, time in enumerate(times):
+    for i, time in enumerate(times):
         if time - last_time > 30:
-            segments.append(idx)
+            segments.append(i)
         last_time = time
     segments.append(len(times) - 1)
     segments = list(zip(segments[:-1], segments[1:]))
@@ -49,18 +51,15 @@ for filename in glob.glob(path + "-*.csv"):
         rus = ram_usage[start:end]
 
         to_remove = []
-        for idx, usage in enumerate(rus):
+        for i, usage in enumerate(rus):
             # process not running / failed
             if usage < 500:
-                to_remove.append(idx)
+                to_remove.append(i)
 
         plots.append(np.array([u for i, u in enumerate(rus) if i not in to_remove]))
     plt.violinplot(np.array(plots), showmeans=True, showextrema=False)
 
-ticks = [0, 4, 8, 12, 16, 20]
+ticks = [0, 20, 40, 60, 80, 100]
 plt.xticks(range(0, len(ticks)), ticks)
-plt.plot([], c='C0', label='Autobahnkreuz')
-plt.plot([], c='C1', label='Crossbar')
-plt.plot([], c='C2', label='Emitter')
-plt.legend(loc='center right')
+plt.legend(loc='upper left')
 plt.savefig(path + ".png")
