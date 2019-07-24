@@ -22,8 +22,16 @@ async function main() {
         }, 1000);
 
         while (true) {
-            await new Promise(resolve => {
-                client.publish('scenario/high-load', '', resolve);
+            await new Promise((resolve, reject) => {
+                let rejected = false;
+                let timeout = setTimeout(reject, 1000);
+                client.publish('scenario/high-load', '', () => {
+                    if (!rejected) {
+                        clearTimeout(timeout);
+                        resolve();
+                    }
+                });
+
             });
             msgs += 1;
         }

@@ -21,7 +21,17 @@ async function main() {
         while (true) {
             const timestamp = getTimestamp();
             console.log('publishing topic scenario/ram-usage');
-            await new Promise(resolve => client.publish('scenario/ram-usage', '', resolve));
+            await new Promise((resolve, reject) => {
+                let rejected = false;
+                let timeout = setTimeout(reject, 1000);
+                client.publish('scenario/ram-usage', '', () => {
+                    if (!rejected) {
+                        clearTimeout(timeout);
+                        resolve();
+                    }
+                });
+
+            });
         }
     });
 

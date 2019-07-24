@@ -110,11 +110,11 @@ run() {
         autobahnkreuz)
             mkdir -p plots
 
-            for i in 100 200 300 400 500
+            for i in 1 3 5 7 9 11
             do
-                autobahnkreuz_up 1
+                autobahnkreuz_up $i
                 sleep 10
-                wamp_up "ws://autobahnkreuz:80" $i
+                wamp_up "ws://autobahnkreuz:80" 600
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
@@ -143,7 +143,7 @@ run() {
             do
                 emitter_up $i
                 sleep 10
-                mqtt_up "ws://emitter:80" 100
+                mqtt_up "ws://emitter:80" 600
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
