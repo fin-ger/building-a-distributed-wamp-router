@@ -123,7 +123,7 @@ run() {
         autobahnkreuz)
             mkdir -p plots
 
-            for i in 20 40 60 80 100
+            for i in 100 200 300 400 500 600
             do
                 autobahnkreuz_up
                 sleep 10
@@ -152,7 +152,7 @@ run() {
         crossbar)
             mkdir -p plots
 
-            for i in 20 40 60 80 100
+            for i in 100 200 300 400 500 600
             do
                 crossbar_up
                 sleep 10
@@ -181,7 +181,7 @@ run() {
         emitter)
             mkdir -p plots
 
-            for i in 20 40 60 80 100
+            for i in 100 200 300 400 500 600
             do
                 emitter_up
                 sleep 10

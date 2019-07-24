@@ -17,23 +17,27 @@ async function main() {
         let msgs = 0;
 
         setInterval(() => {
-            console.log(`${hostname},${getTimestamp()},${msgs}`);
-            msgs = 0;
+            if (msgs > 0) {
+                console.log(`${hostname},${getTimestamp()},${msgs}`);
+                msgs = 0;
+            }
         }, 1000);
 
         while (true) {
-            await new Promise((resolve, reject) => {
-                let rejected = false;
-                let timeout = setTimeout(reject, 1000);
-                client.publish('scenario/scaling-out', '', () => {
-                    if (!rejected) {
-                        clearTimeout(timeout);
-                        resolve();
-                    }
-                });
+            try {
+                await new Promise((resolve, reject) => {
+                    let rejected = false;
+                    let timeout = setTimeout(reject, 1000);
+                    client.publish('scenario/scaling-out', '', () => {
+                        if (!rejected) {
+                            clearTimeout(timeout);
+                            resolve();
+                        }
+                    });
 
-            });
-            msgs += 1;
+                });
+                msgs += 1;
+            } catch (err) {}
         }
     });
 

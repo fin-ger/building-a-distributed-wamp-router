@@ -44,7 +44,7 @@ for idx, filename in enumerate(glob.glob(path + "-*.csv")):
 
 plt.legend()
 
-ticks = ["{}".format(i) for i in range(1, 11)]
+ticks = [1, 3, 5, 7, 9, 11]
 plt.xticks(range(0, len(ticks) * 2, 2), ticks)
 plt.xlim(-2, len(ticks) * 2)
 plt.title('messages per second for several router configurations')

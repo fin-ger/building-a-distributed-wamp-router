@@ -170,7 +170,7 @@ run() {
     esac
 }
 
-run autobahnkreuz
-#run emitter
+#run autobahnkreuz
+run emitter
 
 #./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
