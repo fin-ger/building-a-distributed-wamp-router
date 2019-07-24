@@ -11,7 +11,7 @@ async function main() {
     const hostname = os.hostname();
     const client = mqtt.connect(ROUTER_ADDRESS);
 
-    client.on('connect', async () => {
+    client.on('connect', () => {
         client.subscribe('scenario/scaling-out');
 
         let msgs = 0;
@@ -21,14 +21,16 @@ async function main() {
             msgs = 0;
         }, 1000);
 
-        while (true) {
-            await new Promise(resolve => {
-                client.publish('scenario/scaling-out', '', () => {
-                    msgs += 1;
-                    resolve();
+        setTimeout(async () => {
+            while (true) {
+                await new Promise(resolve => {
+                    client.publish('scenario/scaling-out', '', () => {
+                        msgs += 1;
+                        resolve();
+                    });
                 });
-            });
-        }
+            }
+        }, 0);
     });
 
     client.on('message', function (topic, message) {

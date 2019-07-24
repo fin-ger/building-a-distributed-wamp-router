@@ -21,14 +21,16 @@ async function main() {
             msgs = 0;
         }, 1000);
 
-        while (true) {
-            await new Promise(resolve => {
-                client.publish('scenario/high-load', '', () => {
-                    msgs += 1;
-                    resolve();
+        setTimeout(async () => {
+            while (true) {
+                await new Promise(resolve => {
+                    client.publish('scenario/high-load', '', () => {
+                        msgs += 1;
+                        resolve();
+                    });
                 });
-            });
-        }
+            }
+        }, 0);
     });
 
     client.on('message', function (topic, message) {

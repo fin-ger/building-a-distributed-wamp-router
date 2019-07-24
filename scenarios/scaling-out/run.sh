@@ -143,7 +143,7 @@ run() {
             do
                 emitter_up $i
                 sleep 10
-                mqtt_up "ws://emitter:80" 600
+                mqtt_up "ws://emitter:80" 200
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
