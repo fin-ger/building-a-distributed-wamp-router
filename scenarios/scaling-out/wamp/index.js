@@ -29,7 +29,11 @@ async function main() {
         },
     });
 
-    await connection.Open();
+    try {
+        await connection.Open();
+    } catch (err) {
+        process.exit(1);
+    }
     connection.Subscribe(
         'scenario.scaling_out',
         () => {},
@@ -43,8 +47,10 @@ async function main() {
     }, 1000);
 
     setInterval(async () => {
-        await connection.Publish('scenario.scaling_out');
-        msgs += 1;
+        try {
+            await connection.Publish('scenario.scaling_out');
+            msgs += 1;
+        } catch (err) {}
     }, 0);
 }
 

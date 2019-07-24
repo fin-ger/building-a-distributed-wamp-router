@@ -119,7 +119,7 @@ kill_random_pod() {
 run() {
     ROUTER="$1"
     CLUSTER_IP="116.203.84.181"
-    TOKEN="$(kubectl get secret -n kube-system cluster-admin-token-8hbgk -o json | jq -r .data.token | base64 -d)"
+    TOKEN="$(kubectl get secret -n kube-system cluster-admin-token-8q6tv -o json | jq -r .data.token | base64 -d)"
 
     case "${ROUTER}" in
         autobahnkreuz)

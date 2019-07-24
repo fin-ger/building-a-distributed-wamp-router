@@ -110,11 +110,11 @@ run() {
         autobahnkreuz)
             mkdir -p plots
 
-            for i in 1 2 3 4 5 6 7 8 9 10
+            for i in 100 200 300 400 500
             do
-                autobahnkreuz_up $i
+                autobahnkreuz_up 1
                 sleep 10
-                wamp_up "ws://autobahnkreuz:80" 100
+                wamp_up "ws://autobahnkreuz:80" $i
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
@@ -139,7 +139,7 @@ run() {
         emitter)
             mkdir -p plots
 
-            for i in 1 2 3 4 5 6 7 8 9 10
+            for i in 1 3 5 7 9 11
             do
                 emitter_up $i
                 sleep 10
@@ -171,6 +171,6 @@ run() {
 }
 
 run autobahnkreuz
-run emitter
+#run emitter
 
-./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
+#./plot.py "plots/${TIMESTAMP}-${SCENARIO}"

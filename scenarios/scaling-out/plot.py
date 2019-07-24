@@ -47,7 +47,7 @@ plt.legend()
 ticks = ["{}".format(i) for i in range(1, 11)]
 plt.xticks(range(0, len(ticks) * 2, 2), ticks)
 plt.xlim(-2, len(ticks) * 2)
-plt.title('messages per second for several router and client configurations')
+plt.title('messages per second for several router configurations')
 plt.xlabel('router instances')
 plt.ylabel('messages per second per client')
 plt.ylim((0, 1000))

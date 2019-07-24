@@ -29,7 +29,11 @@ async function main() {
         },
     });
 
-    await connection.Open();
+    try {
+        await connection.Open();
+    } catch (err) {
+        process.exit(1);
+    }
     connection.Subscribe(
         'scenario.ram_usage',
         () => {
@@ -40,7 +44,9 @@ async function main() {
     while (true) {
         const timestamp = getTimestamp();
         console.log('publishing topic scenario.ram_usage');
-        await connection.Publish('scenario.ram_usage');
+        try {
+            await connection.Publish('scenario.ram_usage');
+        } catch (err) {}
     }
 }
 

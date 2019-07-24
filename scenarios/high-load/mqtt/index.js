@@ -20,13 +20,13 @@ async function main() {
             console.log(`${hostname},${getTimestamp()},${msgs}`);
             msgs = 0;
         }, 1000);
-        
-        setInterval(async () => {
+
+        while (true) {
             await new Promise(resolve => {
                 client.publish('scenario/high-load', '', resolve);
             });
             msgs += 1;
-        }, 0);
+        }
     });
 
     client.on('message', function (topic, message) {

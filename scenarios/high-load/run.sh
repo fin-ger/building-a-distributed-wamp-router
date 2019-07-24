@@ -212,8 +212,8 @@ run() {
     esac
 }
 
-run autobahnkreuz
-run crossbar
+#run autobahnkreuz
+#run crossbar
 run emitter
 
 ./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
