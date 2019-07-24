@@ -17,27 +17,17 @@ async function main() {
         let msgs = 0;
 
         setInterval(() => {
-            if (msgs > 0) {
-                console.log(`${hostname},${getTimestamp()},${msgs}`);
-                msgs = 0;
-            }
+            console.log(`${hostname},${getTimestamp()},${msgs}`);
+            msgs = 0;
         }, 1000);
 
         while (true) {
-            try {
-                await new Promise((resolve, reject) => {
-                    let rejected = false;
-                    let timeout = setTimeout(reject, 1000);
-                    client.publish('scenario/scaling-out', '', () => {
-                        if (!rejected) {
-                            clearTimeout(timeout);
-                            resolve();
-                        }
-                    });
-
+            await new Promise(resolve => {
+                client.publish('scenario/scaling-out', '', () => {
+                    msgs += 1;
+                    resolve();
                 });
-                msgs += 1;
-            } catch (err) {}
+            });
         }
     });
 
