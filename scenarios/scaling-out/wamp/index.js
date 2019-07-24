@@ -40,18 +40,20 @@ async function main() {
     );
 
     let msgs = 0;
+    let time = getTimestamp();
 
-    setInterval(() => {
-        console.log(`${hostname},${getTimestamp()},${msgs}`);
-        msgs = 0;
-    }, 1000);
-
-    setInterval(async () => {
+    while (true) {
+        let now = getTimestamp();
+        if (now - time > 1000) {
+            console.log(`${hostname},${now},${msgs}`);
+            msgs = 0;
+            time = now;
+        }
         try {
             await connection.Publish('scenario.scaling_out');
             msgs += 1;
         } catch (err) {}
-    }, 0);
+    }
 }
 
 main();

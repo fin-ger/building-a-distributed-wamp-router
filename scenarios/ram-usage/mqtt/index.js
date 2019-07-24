@@ -15,18 +15,15 @@ async function main() {
     const hostname = os.hostname();
     const client = mqtt.connect(ROUTER_ADDRESS);
 
-    client.on('connect', () => {
+    client.on('connect', async () => {
         client.subscribe('scenario/ram-usage');
 
-        setTimeout(async () => {
-            while (true) {
-                const timestamp = getTimestamp();
-                console.log('publishing topic scenario/ram-usage');
-                await new Promise(resolve => {
-                    client.publish('scenario/ram-usage', '', resolve);
-                });
-            }
-        }, 0);
+        while (true) {
+            console.log('publishing topic scenario/ram-usage');
+            await new Promise(resolve => {
+                client.publish('scenario/ram-usage', '', resolve);
+            });
+        }
     });
 
     client.on('message', function (topic, message) {

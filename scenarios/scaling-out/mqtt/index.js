@@ -9,28 +9,26 @@ function getTimestamp() {
 
 async function main() {
     const hostname = os.hostname();
-    const client = mqtt.connect(ROUTER_ADDRESS);
+    client = mqtt.connect(ROUTER_ADDRESS);
 
-    client.on('connect', () => {
+    client.on('connect', async () => {
         client.subscribe('scenario/scaling-out');
 
         let msgs = 0;
+        let time = getTimestamp();
 
-        setInterval(() => {
-            console.log(`${hostname},${getTimestamp()},${msgs}`);
-            msgs = 0;
-        }, 1000);
-
-        setTimeout(async () => {
-            while (true) {
-                await new Promise(resolve => {
-                    client.publish('scenario/scaling-out', '', () => {
-                        msgs += 1;
-                        resolve();
-                    });
-                });
+        while (true) {
+            let now = getTimestamp();
+            if (now - time > 1000) {
+                console.log(`${hostname},${now},${msgs}`);
+                msgs = 0;
+                time = now;
             }
-        }, 0);
+            await new Promise(resolve => {
+                client.publish('scenario/scaling-out', '', resolve);
+            });
+            msgs += 1;
+        }
     });
 
     client.on('message', function (topic, message) {
