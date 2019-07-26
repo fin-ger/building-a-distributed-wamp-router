@@ -13,6 +13,8 @@ function getTimestamp() {
 }
 
 async function main() {
+    console.log(`${hostname},${getTimestamp()},init`);
+
     const hostname = os.hostname();
     const connection = new Connection({
         endpoint: ROUTER_ADDRESS,

@@ -123,7 +123,7 @@ run() {
         autobahnkreuz)
             mkdir -p plots
 
-            for i in 100 200 300 400 500 600
+            for i in 1 2 3 4 5 6 7 8 9 10
             do
                 autobahnkreuz_up
                 sleep 10
@@ -131,7 +131,7 @@ run() {
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
-                LENGTH="$(date -d "now +5 min" +%s)"
+                LENGTH="$(date -d "now +1 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
@@ -141,7 +141,7 @@ run() {
                         --since-time "${SINCE}" \
                         --selector "app.kubernetes.io/name=${SCENARIO}" \
                         --max-log-requests 100 \
-                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-autobahnkreuz.csv"
+                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-$i-autobahnkreuz.csv"
 
                 wamp_down
                 autobahnkreuz_down
@@ -152,7 +152,7 @@ run() {
         crossbar)
             mkdir -p plots
 
-            for i in 100 200 300 400 500 600
+            for i in 1 2 3 4 5 6 7 8 9 10
             do
                 crossbar_up
                 sleep 10
@@ -160,7 +160,7 @@ run() {
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
-                LENGTH="$(date -d "now +5 min" +%s)"
+                LENGTH="$(date -d "now +1 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
@@ -170,7 +170,7 @@ run() {
                         --since-time "${SINCE}" \
                         --selector "app.kubernetes.io/name=${SCENARIO}" \
                         --max-log-requests 100 \
-                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-crossbar.csv"
+                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-$i-crossbar.csv"
 
                 wamp_down
                 crossbar_down
@@ -181,7 +181,7 @@ run() {
         emitter)
             mkdir -p plots
 
-            for i in 100 200 300 400 500 600
+            for i in 1 2 3 4 5 6 7 8 9 10
             do
                 emitter_up
                 sleep 10
@@ -189,7 +189,7 @@ run() {
                 sleep 60
 
                 SINCE="$(date --iso-8601=seconds)"
-                LENGTH="$(date -d "now +5 min" +%s)"
+                LENGTH="$(date -d "now +1 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
@@ -199,7 +199,7 @@ run() {
                         --since-time "${SINCE}" \
                         --selector "app.kubernetes.io/name=${SCENARIO}" \
                         --max-log-requests 100 \
-                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-emitter.csv"
+                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-$i-emitter.csv"
 
                 mqtt_down
                 emitter_down
@@ -212,8 +212,8 @@ run() {
     esac
 }
 
-#run autobahnkreuz
-#run crossbar
+run autobahnkreuz
+run crossbar
 run emitter
 
 ./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
