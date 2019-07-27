@@ -17,7 +17,7 @@ async function main() {
     let stream = fs.createWriteStream(`/metrics/${os.hostname()}.csv`);
 
     const hostname = os.hostname();
-    stream.write(`${hostname},${getTimestamp()},init`, 'ascii');
+    stream.write(`${hostname},${getTimestamp()},init\n`, 'ascii');
 
     const connection = new Connection({
         endpoint: ROUTER_ADDRESS,
@@ -50,7 +50,7 @@ async function main() {
     while (true) {
         let now = getTimestamp();
         if (now - time > 1000) {
-            stream.write(`${hostname},${now},${msgs}`, 'ascii');
+            stream.write(`${hostname},${now},${msgs}\n`, 'ascii');
             msgs = 0;
             time = now;
         }

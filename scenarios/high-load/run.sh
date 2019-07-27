@@ -125,6 +125,8 @@ run() {
 
             for i in 1 2 3 4 5 6 7 8 9 10
             do
+                # TODO clear /metrics on all nodes
+
                 autobahnkreuz_up
                 sleep 10
                 wamp_up "ws://autobahnkreuz:80" $i
@@ -137,14 +139,16 @@ run() {
                     sleep 1
                 done
 
-                kubectl logs \
-                        --since-time "${SINCE}" \
-                        --selector "app.kubernetes.io/name=${SCENARIO}" \
-                        --max-log-requests 100 \
-                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-$i-autobahnkreuz.csv"
+                #kubectl logs \
+                #        --since-time "${SINCE}" \
+                #        --selector "app.kubernetes.io/name=${SCENARIO}" \
+                #        --max-log-requests 100 \
+                #        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-$i-autobahnkreuz.csv"
 
                 wamp_down
                 autobahnkreuz_down
+
+                # TODO copy files from nodes
             done
 
             return
@@ -154,6 +158,8 @@ run() {
 
             for i in 1 2 3 4 5 6 7 8 9 10
             do
+                # TODO clear all metrics on all nodes
+
                 crossbar_up
                 sleep 10
                 wamp_up "ws://crossbar:80/ws" $i
@@ -166,14 +172,16 @@ run() {
                     sleep 1
                 done
 
-                kubectl logs \
-                        --since-time "${SINCE}" \
-                        --selector "app.kubernetes.io/name=${SCENARIO}" \
-                        --max-log-requests 100 \
-                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-$i-crossbar.csv"
+                #kubectl logs \
+                #        --since-time "${SINCE}" \
+                #        --selector "app.kubernetes.io/name=${SCENARIO}" \
+                #        --max-log-requests 100 \
+                #        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-$i-crossbar.csv"
 
                 wamp_down
                 crossbar_down
+
+                # TODO copy files from nodes
             done
 
             return
@@ -212,8 +220,8 @@ run() {
     esac
 }
 
-run autobahnkreuz
+#run autobahnkreuz
 run crossbar
-run emitter
+#run emitter
 
 ./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
