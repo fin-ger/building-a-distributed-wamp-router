@@ -1,5 +1,10 @@
 const mqtt = require('mqtt');
 const os = require('os');
+const fs = require('fs');
+const util = require('util');
+
+const open = util.promisify(fs.open);
+const write = util.promisify(fs.write);
 
 const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS;
 
@@ -9,10 +14,22 @@ function getTimestamp() {
 
 async function main() {
     const hostname = os.hostname();
+    let _err, fd = await open(`./metrics/${hostname}.csv`, 'w');
+    await write(fd, `${hostname},${getTimestamp()},init\n`);
+
     const client = mqtt.connect(ROUTER_ADDRESS);
 
+    let resolve_key;
+    let get_key = new Promise(resolve => resolve_key = resolve);
+
     client.on('connect', async () => {
-        client.subscribe('scenario/high-load');
+        client.publish('emitter/keygen/', JSON.stringify({
+            key: 'cSxjhk8xu6TvrvRGcXiIISUxEimpaAx5',
+            channel: 'high-load/',
+            type: 'rw',
+        }));
+        let key = await get_key;
+        client.subscribe(`${key}/high-load/`);
 
         let msgs = 0;
         let time = getTimestamp();
@@ -20,18 +37,23 @@ async function main() {
         while (true) {
             let now = getTimestamp();
             if (now - time > 1000) {
-                console.log(`${hostname},${now},${msgs}`);
+                await write(fd, `${hostname},${now},${msgs}\n`);
                 msgs = 0;
                 time = now;
             }
             await new Promise(resolve => {
-                client.publish('scenario/high-load', '', resolve);
+                client.publish(`${key}/high-load/`, '', resolve);
             });
             msgs += 1;
         }
+
+        stream.end();
     });
 
-    client.on('message', function (topic, message) {
+    client.on('message', function (topic, message, packet) {
+        if (packet.topic === 'emitter/keygen/') {
+            resolve_key(JSON.parse(packet.payload.toString()).key);
+        }
     });
 }
 

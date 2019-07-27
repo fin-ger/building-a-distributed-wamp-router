@@ -14,14 +14,14 @@ function getTimestamp() {
 }
 
 async function main() {
-    let stream = fs.createWriteStream(`/metrics/${os.hostname()}.csv`);
-
     const hostname = os.hostname();
+    let stream = fs.createWriteStream(`./metrics/${hostname}.csv`);
+
     stream.write(`${hostname},${getTimestamp()},init\n`, 'ascii');
 
     const connection = new Connection({
         endpoint: ROUTER_ADDRESS,
-        realm: 'default',
+        realm: 'realm1',
 
         serializer: new JSONSerializer(),
         transport: NodeWebSocketTransport,
@@ -37,6 +37,7 @@ async function main() {
     try {
         await connection.Open();
     } catch (err) {
+        console.log(err);
         process.exit(1);
     }
     connection.Subscribe(
@@ -55,7 +56,9 @@ async function main() {
             time = now;
         }
         try {
-            await connection.Publish('scenario.high_load');
+            await connection.Publish('scenario.high_load', [], {}, {
+                acknowledge: true,
+            });
             msgs += 1;
         } catch (err) {}
     }

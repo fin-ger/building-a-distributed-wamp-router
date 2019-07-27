@@ -26,7 +26,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: EMITTER_LICENSE
-              value: "zT83oDV0DWY5_JysbSTPTDr8KB0AAAAAAAAAAAAAAAI" # This is a test license, DO NOT USE IN PRODUCTION!
+              value: "yb548XaCtVQz2EPCXAReI8lUW75ssKFPAAAAAAAAAAI:1"
             - name: EMITTER_CLUSTER_SEED
               value: "emitter"
             - name: EMITTER_CLUSTER_ADVERTISE
