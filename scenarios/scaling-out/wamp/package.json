@@ -9,7 +9,6 @@
   "author": "Fin Christensen",
   "license": "MIT",
   "dependencies": {
-    "@verkehrsministerium/kraftfahrstrasse": "github:verkehrsministerium/kraftfahrstrasse#feature/awaitable-send",
-    "sleep": "^6.1.0"
+    "@verkehrsministerium/kraftfahrstrasse": "github:verkehrsministerium/kraftfahrstrasse#feature/awaitable-send"
   }
 }

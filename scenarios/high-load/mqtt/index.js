@@ -1,5 +1,4 @@
 const mqtt = require('mqtt');
-const sleep = require('sleep');
 const os = require('os');
 const fs = require('fs');
 const util = require('util');
@@ -33,21 +32,18 @@ async function main() {
         client.subscribe(`${key}/high-load/`);
 
         let msgs = 0;
-        let time = getTimestamp();
 
-        while (true) {
-            let now = getTimestamp();
-            if (now - time > 1000) {
-                await write(fd, `${hostname},${now},${msgs}\n`);
-                msgs = 0;
-                time = now;
-            }
+        setInterval(async () => {
+            await write(fd, `${hostname},${now},${msgs}\n`);
+            msgs = 0;
+        }, 0);
+
+        setInterval(async () => {
             await new Promise(resolve => {
                 client.publish(`${key}/high-load/`, '', resolve);
             });
             msgs += 1;
-            sleep.usleep(1000);
-        }
+        }, 0);
     });
 
     client.on('message', function (topic, message, packet) {

@@ -1,5 +1,4 @@
 const mqtt = require('mqtt');
-const sleep = require('sleep');
 const os = require('os');
 
 const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS;
@@ -28,12 +27,11 @@ async function main() {
         let key = await get_key;
         client.subscribe(`${key}/ram-usage/`);
 
-        while (true) {
+        setInterval(async () => {
             await new Promise(resolve => {
                 client.publish(`${key}/ram-usage/`, '', resolve);
             });
-            sleep.usleep(1000);
-        }
+        }, 0);
     });
 
     client.on('message', function (topic, message, packet) {
