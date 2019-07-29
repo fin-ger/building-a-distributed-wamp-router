@@ -9,6 +9,7 @@
   "author": "Fin Christensen",
   "license": "MIT",
   "dependencies": {
-    "mqtt": "^3.0.0"
+    "mqtt": "^3.0.0",
+    "sleep": "^6.1.0"
   }
 }

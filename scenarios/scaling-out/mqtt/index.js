@@ -1,4 +1,5 @@
 const mqtt = require('mqtt');
+const sleep = require('sleep');
 const os = require('os');
 const fs = require('fs');
 const util = require('util');
@@ -44,6 +45,7 @@ async function main() {
                 client.publish(`${key}/scaling-out/`, '', resolve);
             });
             msgs += 1;
+            sleep.usleep(100);
         }
     });
 

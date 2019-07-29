@@ -59,7 +59,7 @@ for idx, filename in enumerate(glob.glob(path + "-*.csv")):
         plots.append(np.array([u for i, u in enumerate(rus) if i not in to_remove]))
     plt.violinplot(np.array(plots), showmeans=True, showextrema=False)
 
-ticks = [0, 20, 40, 60, 80, 100]
+ticks = [0, 1, 2, 3, 4, 5]
 plt.xticks(range(0, len(ticks)), ticks)
 plt.legend(loc='upper left')
 plt.savefig(path + ".png")

@@ -123,7 +123,7 @@ run() {
         autobahnkreuz)
             mkdir -p plots
 
-            for i in 1 2 3 4 5 6 7 8 9 10
+            for i in 1 2 3 4 5
             do
                 for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
                 do
@@ -144,12 +144,12 @@ run() {
                 wamp_down
                 autobahnkreuz_down
 
-                mkdir plots/tmp
+                mkdir -p plots/tmp
                 for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
                 do
-                    scp -r "rancher@${node}:/metrics/*" plots/tmp
-                    cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-autobahnkreuz.csv"
+                    scp -r "rancher@${node}:/metrics/*" plots/tmp || true
                 done
+                cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-autobahnkreuz.csv"
                 rm -r plots/tmp
             done
 
@@ -158,7 +158,7 @@ run() {
         crossbar)
             mkdir -p plots
 
-            for i in 1 2 3 4 5 6 7 8 9 10
+            for i in 1 2 3 4 5
             do
                 for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
                 do
@@ -179,12 +179,12 @@ run() {
                 wamp_down
                 crossbar_down
 
-                mkdir plots/tmp
+                mkdir -p plots/tmp
                 for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
                 do
-                    scp -r "rancher@${node}:/metrics/*" plots/tmp
-                    cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-crossbar.csv"
+                    scp -r "rancher@${node}:/metrics/*" plots/tmp || true
                 done
+                cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-crossbar.csv"
                 rm -r plots/tmp
             done
 
@@ -193,7 +193,7 @@ run() {
         emitter)
             mkdir -p plots
 
-            for i in 1 2 3 4 5 6 7 8 9 10
+            for i in 1 2 3 4 5
             do
                 for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
                 do
@@ -214,12 +214,12 @@ run() {
                 gmqtt_down
                 emitter_down
 
-                mkdir plots/tmp
+                mkdir -p plots/tmp
                 for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
                 do
-                    scp -r "rancher@${node}:/metrics/*" plots/tmp
-                    cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-emitter.csv"
+                    scp -r "rancher@${node}:/metrics/*" plots/tmp || true
                 done
+                cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-emitter.csv"
                 rm -r plots/tmp
             done
 

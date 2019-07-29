@@ -110,28 +110,34 @@ run() {
         autobahnkreuz)
             mkdir -p plots
 
-            for i in 1 3 5 7 9
+            for i in 1 2 3 4 5
             do
+                for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
+                do
+                    ssh "rancher@${node}" "sudo rm -rf /metrics/*"
+                done
+
                 autobahnkreuz_up $i
                 sleep 10
-                wamp_up "ws://autobahnkreuz:80" 100
+                wamp_up "ws://autobahnkreuz:80" 5
                 sleep 60
 
-                SINCE="$(date --iso-8601=seconds)"
                 LENGTH="$(date -d "now +5 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
                 done
 
-                kubectl logs \
-                        --since-time "${SINCE}" \
-                        --selector "app.kubernetes.io/name=${SCENARIO}" \
-                        --max-log-requests 100 \
-                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-autobahnkreuz.csv"
-
                 wamp_down
                 autobahnkreuz_down
+
+                mkdir -p plots/tmp
+                for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
+                do
+                    scp -r "rancher@${node}:/metrics/*" plots/tmp || true
+                done
+                cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-autobahnkreuz.csv"
+                rm -r plots/tmp
             done
 
             return
@@ -139,28 +145,34 @@ run() {
         emitter)
             mkdir -p plots
 
-            for i in 1 3 5 7 9
+            for i in 1 2 3 4 5
             do
+                for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
+                do
+                    ssh "rancher@${node}" "sudo rm -rf /metrics/*"
+                done
+
                 emitter_up $i
                 sleep 10
-                mqtt_up "ws://emitter:80" 100
+                mqtt_up "ws://emitter:80" 5
                 sleep 60
 
-                SINCE="$(date --iso-8601=seconds)"
                 LENGTH="$(date -d "now +5 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
                 done
 
-                kubectl logs \
-                        --since-time "${SINCE}" \
-                        --selector "app.kubernetes.io/name=${SCENARIO}" \
-                        --max-log-requests 100 \
-                        --tail 9223372036854775807 >> "plots/${TIMESTAMP}-${SCENARIO}-emitter.csv"
-
                 mqtt_down
                 emitter_down
+
+                mkdir -p plots/tmp
+                for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
+                do
+                    scp -r "rancher@${node}:/metrics/*" plots/tmp || true
+                done
+                cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-emitter.csv"
+                rm -r plots/tmp
             done
 
             return

@@ -4,6 +4,7 @@ const {
     JSONSerializer,
     NodeWebSocketTransport,
 } = require('@verkehrsministerium/kraftfahrstrasse');
+const sleep = require('sleep');
 const os = require('os');
 
 const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS;
@@ -48,6 +49,7 @@ async function main() {
         try {
             await connection.Publish('scenario.ram_usage');
         } catch (err) {}
+        sleep.usleep(100);
     }
 }
 

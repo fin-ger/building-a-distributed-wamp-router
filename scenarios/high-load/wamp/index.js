@@ -4,6 +4,7 @@ const {
     JSONSerializer,
     NodeWebSocketTransport,
 } = require('@verkehrsministerium/kraftfahrstrasse');
+const sleep = require('sleep');
 const os = require('os');
 const fs = require('fs');
 const util = require('util');
@@ -62,6 +63,7 @@ async function main() {
             await connection.Publish('scenario.high_load');
             msgs += 1;
         } catch (err) {}
+        sleep.usleep(100);
     }
 }
 
