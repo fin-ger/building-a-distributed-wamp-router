@@ -6,6 +6,10 @@ const {
 } = require('@verkehrsministerium/kraftfahrstrasse');
 const os = require('os');
 const fs = require('fs');
+const util = require('util');
+
+const open = util.promisify(fs.open);
+const write = util.promisify(fs.write);
 
 const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS;
 
@@ -15,13 +19,12 @@ function getTimestamp() {
 
 async function main() {
     const hostname = os.hostname();
-    let stream = fs.createWriteStream(`./metrics/${hostname}.csv`);
-
-    stream.write(`${hostname},${getTimestamp()},init\n`, 'ascii');
+    let _err, fd = await open(`/metrics/${hostname}.csv`, 'w');
+    await write(fd, `${hostname},${getTimestamp()},init\n`);
 
     const connection = new Connection({
         endpoint: ROUTER_ADDRESS,
-        realm: 'realm1',
+        realm: 'default',
 
         serializer: new JSONSerializer(),
         transport: NodeWebSocketTransport,
@@ -50,20 +53,16 @@ async function main() {
 
     while (true) {
         let now = getTimestamp();
-        if (now - time > 1000) {
-            stream.write(`${hostname},${now},${msgs}\n`, 'ascii');
+        if (now - time >= 1000) {
+            await write(fd, `${hostname},${getTimestamp()},${msgs}\n`);
             msgs = 0;
             time = now;
         }
         try {
-            await connection.Publish('scenario.high_load', [], {}, {
-                acknowledge: true,
-            });
+            await connection.Publish('scenario.high_load');
             msgs += 1;
         } catch (err) {}
     }
-
-    stream.end();
 }
 
 main();

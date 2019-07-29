@@ -29,21 +29,22 @@ async function main() {
         },
     });
 
+    console.log('connecting...');
     try {
         await connection.Open();
     } catch (err) {
+        console.log(err);
         process.exit(1);
     }
+    console.log('subscribing...');
     connection.Subscribe(
         'scenario.ram_usage',
-        () => {
-            console.log('received topic scenario.ram_usage');
-        },
+        () => {},
     );
 
+    console.log('publishing...');
     while (true) {
         const timestamp = getTimestamp();
-        console.log('publishing topic scenario.ram_usage');
         try {
             await connection.Publish('scenario.ram_usage');
         } catch (err) {}

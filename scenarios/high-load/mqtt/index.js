@@ -14,7 +14,7 @@ function getTimestamp() {
 
 async function main() {
     const hostname = os.hostname();
-    let _err, fd = await open(`./metrics/${hostname}.csv`, 'w');
+    let _err, fd = await open(`/metrics/${hostname}.csv`, 'w');
     await write(fd, `${hostname},${getTimestamp()},init\n`);
 
     const client = mqtt.connect(ROUTER_ADDRESS);
@@ -46,8 +46,6 @@ async function main() {
             });
             msgs += 1;
         }
-
-        stream.end();
     });
 
     client.on('message', function (topic, message, packet) {

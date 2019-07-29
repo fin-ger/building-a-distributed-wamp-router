@@ -15,20 +15,28 @@ async function main() {
     const hostname = os.hostname();
     const client = mqtt.connect(ROUTER_ADDRESS);
 
+    let resolve_key;
+    let get_key = new Promise(resolve => resolve_key = resolve);
+
     client.on('connect', async () => {
-        client.subscribe('scenario/ram-usage');
+        client.publish('emitter/keygen/', JSON.stringify({
+            key: 'cSxjhk8xu6TvrvRGcXiIISUxEimpaAx5',
+            channel: 'ram-usage/',
+            type: 'rw',
+        }));
+        let key = await get_key;
+        client.subscribe(`${key}/ram-usage/`);
 
         while (true) {
-            console.log('publishing topic scenario/ram-usage');
             await new Promise(resolve => {
-                client.publish('scenario/ram-usage', '', resolve);
+                client.publish(`${key}/ram-usage/`, '', resolve);
             });
         }
     });
 
-    client.on('message', function (topic, message) {
-        if (topic === 'scenario/ram-usage') {
-            console.log('received topic scenario/ram-usage');
+    client.on('message', function (topic, message, packet) {
+        if (packet.topic === 'emitter/keygen/') {
+            resolve_key(JSON.parse(packet.payload.toString()).key);
         }
     });
 }

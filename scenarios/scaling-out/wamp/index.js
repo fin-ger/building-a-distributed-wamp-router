@@ -5,6 +5,11 @@ const {
     NodeWebSocketTransport,
 } = require('@verkehrsministerium/kraftfahrstrasse');
 const os = require('os');
+const fs = require('fs');
+const util = require('util');
+
+const open = util.promisify(fs.open);
+const write = util.promisify(fs.write);
 
 const ROUTER_ADDRESS = process.env.ROUTER_ADDRESS;
 
@@ -14,6 +19,9 @@ function getTimestamp() {
 
 async function main() {
     const hostname = os.hostname();
+    let _err, fd = await open(`/metrics/${hostname}.csv`, 'w');
+    await write(fd, `${hostname},${getTimestamp()},init\n`);
+
     const connection = new Connection({
         endpoint: ROUTER_ADDRESS,
         realm: 'default',
@@ -32,6 +40,7 @@ async function main() {
     try {
         await connection.Open();
     } catch (err) {
+        console.log(err);
         process.exit(1);
     }
     connection.Subscribe(
@@ -44,8 +53,8 @@ async function main() {
 
     while (true) {
         let now = getTimestamp();
-        if (now - time > 1000) {
-            console.log(`${hostname},${now},${msgs}`);
+        if (now - time >= 1000) {
+            await write(fd, `${hostname},${getTimestamp()},${msgs}\n`);
             msgs = 0;
             time = now;
         }

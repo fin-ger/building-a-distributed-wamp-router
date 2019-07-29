@@ -23,3 +23,11 @@ spec:
           env:
             - name: ROUTER_ADDRESS
               value: {{ .Values.routerAddress }}
+          volumeMounts:
+            - mountPath: /metrics
+              name: metrics
+      volumes:
+        - name: metrics
+          hostPath:
+            path: /metrics
+            type: DirectoryOrCreate
