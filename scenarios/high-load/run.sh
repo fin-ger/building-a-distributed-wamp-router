@@ -234,4 +234,4 @@ run autobahnkreuz
 run crossbar
 run emitter
 
-./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
+#./plot.py "plots/${TIMESTAMP}-${SCENARIO}"

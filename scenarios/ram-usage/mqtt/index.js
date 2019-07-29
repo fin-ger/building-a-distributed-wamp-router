@@ -32,7 +32,7 @@ async function main() {
             await new Promise(resolve => {
                 client.publish(`${key}/ram-usage/`, '', resolve);
             });
-            sleep.usleep(100);
+            sleep.usleep(1000);
         }
     });
 

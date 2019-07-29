@@ -45,7 +45,7 @@ async function main() {
                 client.publish(`${key}/scaling-out/`, '', resolve);
             });
             msgs += 1;
-            sleep.usleep(100);
+            sleep.usleep(1000);
         }
     });
 

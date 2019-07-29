@@ -63,7 +63,7 @@ async function main() {
             await connection.Publish('scenario.scaling_out');
             msgs += 1;
         } catch (err) {}
-        sleep.usleep(100);
+        sleep.usleep(1000);
     }
 }
 

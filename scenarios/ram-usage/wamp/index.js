@@ -49,7 +49,7 @@ async function main() {
         try {
             await connection.Publish('scenario.ram_usage');
         } catch (err) {}
-        sleep.usleep(100);
+        sleep.usleep(1000);
     }
 }
 

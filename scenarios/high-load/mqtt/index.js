@@ -46,7 +46,7 @@ async function main() {
                 client.publish(`${key}/high-load/`, '', resolve);
             });
             msgs += 1;
-            sleep.usleep(100);
+            sleep.usleep(1000);
         }
     });
 
