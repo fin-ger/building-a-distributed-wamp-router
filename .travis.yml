@@ -4,14 +4,6 @@ services:
   - docker
 
 script:
-  - docker build -t fin1ger/building-a-distributed-wamp-router:scenario-availability-wamp ./scenarios/availability/wamp
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push fin1ger/building-a-distributed-wamp-router:scenario-availability-wamp
-
-  - docker build -t fin1ger/building-a-distributed-wamp-router:scenario-availability-mqtt ./scenarios/availability/mqtt
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push fin1ger/building-a-distributed-wamp-router:scenario-availability-mqtt
-
   - docker build -t fin1ger/building-a-distributed-wamp-router:scenario-ram-usage-wamp ./scenarios/ram-usage/wamp
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push fin1ger/building-a-distributed-wamp-router:scenario-ram-usage-wamp
