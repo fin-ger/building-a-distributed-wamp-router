@@ -53,7 +53,7 @@ async function main() {
     setInterval(async () => {
         await write(fd, `${hostname},${getTimestamp()},${msgs}\n`);
         msgs = 0;
-    }, 0);
+    }, 1000);
 
     setInterval(async () => {
         try {

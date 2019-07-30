@@ -35,7 +35,7 @@ async function main() {
         setInterval(async () => {
             await write(fd, `${hostname},${now},${msgs}\n`);
             msgs = 0;
-        }, 0);
+        }, 1000);
 
         setInterval(async () => {
             await new Promise(resolve => {
