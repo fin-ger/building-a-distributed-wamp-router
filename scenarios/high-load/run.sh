@@ -211,7 +211,7 @@ run() {
                     sleep 1
                 done
 
-                gmqtt_down
+                mqtt_down
                 emitter_down
 
                 mkdir -p plots/tmp
