@@ -4,7 +4,6 @@ const {
     JSONSerializer,
     NodeWebSocketTransport,
 } = require('@verkehrsministerium/kraftfahrstrasse');
-const sleep = require('sleep');
 const os = require('os');
 const fs = require('fs');
 const util = require('util');
