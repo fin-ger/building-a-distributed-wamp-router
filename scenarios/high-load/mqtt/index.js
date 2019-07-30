@@ -34,7 +34,7 @@ async function main() {
         let msgs = 0;
 
         setInterval(async () => {
-            await write(fd, `${hostname},${now},${msgs}\n`);
+            await write(fd, `${hostname},${getTimestamp()},${msgs}\n`);
             msgs = 0;
         }, 1000);
 
