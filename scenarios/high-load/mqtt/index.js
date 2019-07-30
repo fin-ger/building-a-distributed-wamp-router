@@ -29,8 +29,6 @@ async function main() {
             type: 'rw',
         }));
         let key = await get_key;
-        client.subscribe(`${key}/high-load/`);
-
         let msgs = 0;
 
         setInterval(async () => {

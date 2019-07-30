@@ -43,10 +43,6 @@ async function main() {
         console.log(err);
         process.exit(1);
     }
-    connection.Subscribe(
-        'scenario.scaling_out',
-        () => {},
-    );
 
     let msgs = 0;
 

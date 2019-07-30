@@ -37,16 +37,14 @@ async function main() {
         },
     });
 
+    console.log("connecting");
+
     try {
         await connection.Open();
     } catch (err) {
         console.log(err);
         process.exit(1);
     }
-    connection.Subscribe(
-        'scenario.high_load',
-        () => {},
-    );
 
     let msgs = 0;
 
@@ -60,7 +58,7 @@ async function main() {
             await connection.Publish('scenario.high_load');
             msgs += 1;
         } catch (err) {}
-    }, 0);
+    }, 1);
 }
 
 main();

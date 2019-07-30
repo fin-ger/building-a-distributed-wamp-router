@@ -28,7 +28,6 @@ async function main() {
             type: 'rw',
         }));
         let key = await get_key;
-        client.subscribe(`${key}/scaling-out/`);
 
         let msgs = 0;
 

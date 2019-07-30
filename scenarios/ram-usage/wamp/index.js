@@ -36,11 +36,6 @@ async function main() {
         console.log(err);
         process.exit(1);
     }
-    console.log('subscribing...');
-    connection.Subscribe(
-        'scenario.ram_usage',
-        () => {},
-    );
 
     console.log('publishing...');
     setInterval(async () => {

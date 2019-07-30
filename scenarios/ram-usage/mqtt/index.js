@@ -25,7 +25,6 @@ async function main() {
             type: 'rw',
         }));
         let key = await get_key;
-        client.subscribe(`${key}/ram-usage/`);
 
         setInterval(async () => {
             await new Promise(resolve => {
