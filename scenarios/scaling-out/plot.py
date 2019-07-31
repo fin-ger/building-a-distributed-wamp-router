@@ -28,23 +28,24 @@ for idx, filename in enumerate(glob.glob(path + "-*.csv")):
         last_time = time
     segments.append(len(data['time']) - 1)
     segments = list(zip(segments[:-1], segments[1:]))
+    segments = segments[:4]
     segments = np.array([data[start:end]['msgs'] for start, end in segments])
 
     bplot = plt.boxplot(
         segments,
         positions=np.array(range(len(segments))) * 2.0 + (-0.5 + 0.5 * idx),
-        sym='x',
+        sym='',
         vert=True,
         patch_artist=True,
         widths=0.45,
-        whis=[0, 100]
+        whis=[1, 99]
     )
     set_box_color(bplot, "C{}".format(idx))
     plt.plot([], c="C{}".format(idx), label=router)
 
 plt.legend()
 
-ticks = [1, 3, 5, 7, 9, 11]
+ticks = [1, 3, 5, 7]
 plt.xticks(range(0, len(ticks) * 2, 2), ticks)
 plt.xlim(-2, len(ticks) * 2)
 plt.title('messages per second for several router configurations')

@@ -110,7 +110,7 @@ run() {
         autobahnkreuz)
             mkdir -p plots
 
-            for i in 1 2 3 4 5
+            for i in 1 3 5 7 9 11
             do
                 for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
                 do
@@ -136,7 +136,7 @@ run() {
                 do
                     scp -r "rancher@${node}:/metrics/*" plots/tmp || true
                 done
-                cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-autobahnkreuz.csv"
+                cat plots/tmp/* >> "plots/${TIMESTAMP}-${SCENARIO}-autobahnkreuz.csv"
                 rm -r plots/tmp
             done
 
@@ -145,7 +145,7 @@ run() {
         emitter)
             mkdir -p plots
 
-            for i in 1 2 3 4 5
+            for i in 1 3 5 7 9 11
             do
                 for node in $(kubectl get nodes -o json | jq -r '.items[].metadata.name')
                 do
@@ -154,7 +154,7 @@ run() {
 
                 emitter_up $i
                 sleep 10
-                mqtt_up "ws://emitter:80" 5
+                mqtt_up "ws://emitter:80" 100
                 sleep 60
 
                 LENGTH="$(date -d "now +5 min" +%s)"
@@ -171,7 +171,7 @@ run() {
                 do
                     scp -r "rancher@${node}:/metrics/*" plots/tmp || true
                 done
-                cat plots/tmp/* > "plots/${TIMESTAMP}-${SCENARIO}-$i-emitter.csv"
+                cat plots/tmp/* >> "plots/${TIMESTAMP}-${SCENARIO}-emitter.csv"
                 rm -r plots/tmp
             done
 
@@ -182,7 +182,7 @@ run() {
     esac
 }
 
-run autobahnkreuz
+#run autobahnkreuz
 run emitter
 
-#./plot.py "plots/${TIMESTAMP}-${SCENARIO}"
+./plot.py "plots/${TIMESTAMP}-${SCENARIO}"

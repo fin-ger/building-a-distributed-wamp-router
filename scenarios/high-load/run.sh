@@ -135,7 +135,7 @@ run() {
                 wamp_up "ws://autobahnkreuz:80" $i
                 sleep 60
 
-                LENGTH="$(date -d "now +1 min" +%s)"
+                LENGTH="$(date -d "now +5 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
@@ -170,7 +170,7 @@ run() {
                 wamp_up "ws://crossbar:80/ws" $i
                 sleep 60
 
-                LENGTH="$(date -d "now +1 min" +%s)"
+                LENGTH="$(date -d "now +5 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
@@ -205,7 +205,7 @@ run() {
                 mqtt_up "ws://emitter:80" $i
                 sleep 60
 
-                LENGTH="$(date -d "now +1 min" +%s)"
+                LENGTH="$(date -d "now +5 min" +%s)"
                 while [ "${LENGTH}" -ge "$(date +%s)" ]
                 do
                     sleep 1
