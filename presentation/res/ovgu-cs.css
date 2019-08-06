@@ -1,0 +1,345 @@
+@page {
+    size: 1920px 1080px;
+    margin: 0%;
+}
+
+body, .backgrounds {
+    background: unset;
+    background-color: unset;
+}
+
+.reveal {
+    background: white;
+}
+
+.reveal .backgrounds {
+    z-index: -2;
+}
+
+.reveal .slides section {
+    height: 1080px;
+    width: 1920px;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.reveal .slides section.stack {
+    width: 100%;
+}
+
+.reveal .slides section:not(.stack) {
+    background: white;
+    color: black;
+    font-size: 36px;
+    padding-left: 100px !important;
+    padding-right: 100px !important;
+    padding-top: 120px !important;
+    z-index: -2;
+}
+
+.reveal .slides section:not(.stack) h1 {
+    color: black;
+    font-weight: bold;
+    font-size: 48px;
+    margin: 0;
+}
+
+.reveal .slides section:not(.stack) h2 {
+    color: black;
+    font-weight: normal;
+    font-size: 32px;
+    margin: 0;
+}
+
+.reveal .slides section:not(.stack) h3 {
+    color: black;
+    font-weight: bold;
+    font-size: 44px;
+    margin: 0;
+}
+
+.reveal .slides section:not(.stack) h4 {
+    color: black;
+    font-weight: bold;
+    font-size: 40px;
+    margin: 0;
+}
+
+.reveal .slides section:not(.stack) h5 {
+    color: black;
+    font-weight: bold;
+    font-size: 36px;
+    margin: 0;
+}
+
+.reveal .slides section:not(.stack) h6 {
+    color: black;
+    font-weight: bold;
+    font-size: 36px;
+    margin: 0;
+}
+
+.reveal .slides section:not(.stack) ol {
+    list-style-type: upper-roman;
+    list-style-position: outside;
+    margin-left: 0 !important;
+    padding-left: 1em !important;
+}
+
+.reveal .slides section:not(.stack) ul {
+    list-style-image: url(bullet_1.svg);
+    list-style-position: outside;
+    margin-left: 0 !important;
+    padding-left: 1.5em !important;
+}
+
+.reveal .slides section:not(.stack) ul ul {
+    list-style-image: url(bullet_2.svg);
+}
+
+.reveal .slides section:not(.stack) > div > ol {
+    margin-left: -1em !important;
+}
+
+.reveal .slides section:not(.stack) > div > ul {
+    margin-left: -1.5em !important;
+}
+
+.reveal .slides section:not(.stack) a {
+    color: #0168b5;
+}
+
+.reveal .slides section:not(.stack) a:hover {
+    color: rgb(127, 179, 217);
+}
+
+.reveal .slides section:not(.stack) table th {
+    border-bottom: 4px solid;
+}
+
+.reveal .slides section:not(.stack) table td {
+    border-bottom: 2px solid;
+}
+
+.reveal .slides section:not(.stack) table tr:last-child td {
+    border-bottom: none;
+}
+
+.reveal .slides section:not(.stack) blockquote {
+    border: none;
+    border-left: 8px solid #0068b4;
+    padding-left: 20px !important;
+    background-color: rgb(235, 243, 249);
+    box-shadow: none;
+}
+
+.reveal .slides section:not(.stack) pre {
+    font-size: 32px;
+}
+
+.reveal .slides section:not(.stack) code {
+    font-family: Hack, "Roboto Mono", Menlo, Monaco, monospace !important;
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child,
+.reveal .slides .pdf-page:first-child section:not(.stack) {
+    background-image: url(Signet_INF_4.svg);
+    background-repeat: no-repeat;
+    background-size: 90% auto;
+    background-position: center 100px;
+    padding-top: 780px !important;
+    color: white;
+    text-align: center;
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child h1,
+.reveal .slides .pdf-page:first-child section:not(.stack) h1 {
+    color: black;
+    font-weight: bold;
+    text-align: left;
+    font-size: 48px;
+    position: absolute;
+    top: 550px;
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child h2,
+.reveal .slides .pdf-page:first-child section:not(.stack) h2 {
+    color: black;
+    font-weight: normal;
+    text-align: left;
+    font-size: 36px;
+    position: absolute;
+    top: 500px;
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child h3,
+.reveal .slides .pdf-page:first-child section:not(.stack) h3,
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child h4,
+.reveal .slides .pdf-page:first-child section:not(.stack) h4,
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child h5,
+.reveal .slides .pdf-page:first-child section:not(.stack) h5,
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child h6,
+.reveal .slides .pdf-page:first-child section:not(.stack) h6 {
+    color: white;
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child a,
+.reveal .slides .pdf-page:first-child section:not(.stack) a {
+    color: white;
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child a:hover,
+.reveal .slides .pdf-page:first-child section:not(.stack) a:hover {
+    color: rgb(127, 179, 217);
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child a::before,
+.reveal .slides .pdf-page:first-child section:not(.stack) a::before {
+    font-family: "ForkAwesome";
+    font-weight: 900;
+    content: "\f08e";
+    font-size: 0.5em;
+    padding-right: 0.5em !important;
+    vertical-align: middle;
+    color: rgb(127, 179, 217);
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child blockquote,
+.reveal .slides .pdf-page:first-child section:not(.stack) blockquote {
+    border: none;
+    border-left: 8px solid rgb(235, 243, 249);
+    padding-left: 20px !important;
+    background-color: #00599b;
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child ul,
+.reveal .slides .pdf-page:first-child section:not(.stack) ul {
+    list-style-image: url(bullet_3.svg);
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child ul ul,
+.reveal .slides .pdf-page:first-child section:not(.stack) ul ul {
+    list-style-image: url(bullet_4.svg);
+}
+
+.reveal .slides section:not(.stack)::before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin-top: 20px !important;
+    height: 100px;
+    border-bottom: 4px solid #0168b5;
+    width: 100%;
+    display: block;
+    content: "";
+    background-color: white;
+    background-image: url(Signet_INF_4.svg);
+    background-repeat: no-repeat;
+    background-size: auto 95%;
+    background-position: 100px 0;
+}
+
+body:not(.print-pdf) .reveal .slides section:not(.stack):first-child::before,
+.reveal .slides .pdf-page:first-child section:not(.stack)::before {
+    height: 320px;
+    border: none;
+    background-color: #0168b5;
+    background-image: none;
+    bottom: 0;
+    top: unset;
+    z-index: -1;
+}
+
+/*
+Atom One Light by Daniel Gamage
+Original One Light Syntax theme from https://github.com/atom/one-light-syntax
+base:    #fafafa
+mono-1:  #383a42
+mono-2:  #686b77
+mono-3:  #a0a1a7
+hue-1:   #0184bb
+hue-2:   #4078f2
+hue-3:   #a626a4
+hue-4:   #50a14f
+hue-5:   #e45649
+hue-5-2: #c91243
+hue-6:   #986801
+hue-6-2: #c18401
+*/
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: #383a42;
+  background: #fafafa;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #a0a1a7;
+  font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: #a626a4;
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: #e45649;
+}
+
+.hljs-literal {
+  color: #0184bb;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta-string {
+  color: #50a14f;
+}
+
+.hljs-built_in,
+.hljs-class .hljs-title {
+  color: #c18401;
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+  color: #986801;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: #4078f2;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-link {
+  text-decoration: underline;
+}
