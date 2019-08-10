@@ -23,6 +23,10 @@ body, .backgrounds {
     box-sizing: border-box;
 }
 
+.reveal .slides section img {
+    margin: 0;
+}
+
 .reveal .slides section.stack {
     width: 100%;
 }
@@ -87,14 +91,14 @@ body, .backgrounds {
 }
 
 .reveal .slides section:not(.stack) ul {
-    list-style-image: url(bullet_1.svg);
+    list-style-image: url(../res/bullet_1.svg);
     list-style-position: outside;
     margin-left: 0 !important;
     padding-left: 1.5em !important;
 }
 
 .reveal .slides section:not(.stack) ul ul {
-    list-style-image: url(bullet_2.svg);
+    list-style-image: url(../res/bullet_2.svg);
 }
 
 .reveal .slides section:not(.stack) > div > ol {
@@ -143,7 +147,7 @@ body, .backgrounds {
 
 body:not(.print-pdf) .reveal .slides section:not(.stack):first-child,
 .reveal .slides .pdf-page:first-child section:not(.stack) {
-    background-image: url(Signet_INF_4.svg);
+    background-image: url(../res/Signet_INF_4.svg);
     background-repeat: no-repeat;
     background-size: 90% auto;
     background-position: center 100px;
@@ -214,12 +218,12 @@ body:not(.print-pdf) .reveal .slides section:not(.stack):first-child blockquote,
 
 body:not(.print-pdf) .reveal .slides section:not(.stack):first-child ul,
 .reveal .slides .pdf-page:first-child section:not(.stack) ul {
-    list-style-image: url(bullet_3.svg);
+    list-style-image: url(../res/bullet_3.svg);
 }
 
 body:not(.print-pdf) .reveal .slides section:not(.stack):first-child ul ul,
 .reveal .slides .pdf-page:first-child section:not(.stack) ul ul {
-    list-style-image: url(bullet_4.svg);
+    list-style-image: url(../res/bullet_4.svg);
 }
 
 .reveal .slides section:not(.stack)::before {
@@ -233,7 +237,7 @@ body:not(.print-pdf) .reveal .slides section:not(.stack):first-child ul ul,
     display: block;
     content: "";
     background-color: white;
-    background-image: url(Signet_INF_4.svg);
+    background-image: url(../res/Signet_INF_4.svg);
     background-repeat: no-repeat;
     background-size: auto 95%;
     background-position: 100px 0;
