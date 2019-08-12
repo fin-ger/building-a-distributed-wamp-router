@@ -15,8 +15,8 @@ def set_box_color(bp, color):
     plt.setp(bp['medians'], color=color)
 
 path = sys.argv[1]
-plt.title('publishing topics as fast as possible')
-plt.xlabel('time in seconds')
+plt.title('publishing topics every millisecond')
+plt.xlabel('clients connected to the router')
 plt.ylabel('messages per second per client')
 
 for idx, filename in enumerate(glob.glob(path + "-*.csv")):
