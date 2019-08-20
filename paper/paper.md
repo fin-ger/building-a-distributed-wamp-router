@@ -40,7 +40,7 @@ Bondy is another open source WAMP routing application written in Erlang that pro
 
 When not focusing on the WAMP protocol, there exist many cloud-native message routing applications. Emitter is an open source MQTT routing application written in the Go programming language. It uses the Mesh library by Weaveworks to implement a highly available and partition tolerant routing application for the internet of things[@Emitter:2019]. MQTT is a protocol for the publish and subscribe messaging pattern which is heavily used in the internet of things[@karagiannis2015survey]. Emitter uses similar technologies to Bondy and can be used for performance comparisons when investigating publish and subscribe functionalities.
 
-# Solution Concept
+# Background
 
 A possible solution for sharing the state over multiple replicas is to manage the data outside of the application and let another application handle the state synchronization. There are several applications available that can manage data over multiple machines. Most notably distributed databases, key-value stores, and filesystems.
 
@@ -56,7 +56,7 @@ A distributed filesystem is a filesystem that runs on multiple machines at the s
 
 To prevent state inconsistencies between replicas, consensus algorithms can be used to synchronize data between machines. To change the state in a cluster of multiple machines, a consensus must be reached. This can be implemented by starting an election for a state-change. The machines in the cluster must vote in the election for the state-change. A majority of the machines has to approve the state-change to take effect. Otherwise, the state-change gets rejected and a new election must be started. To prevent elections for every state-change, algorithms exist that install a leader in the cluster which is exclusively granted the right to change the state of the cluster. The leader gets elected by the cluster members when no leader is known by the members. All other members of the cluster enter a follower state, where the state changes of the leader are followed. When a follower receives a request to change the state, it has to forward the state-change to the current leader[@Ongaro:2014].
 
-## Kacke am Dampfen
+# Solution Concept
 
 Besides the state needed for the routing, there is other data that must be transferred between router replicas. Publications and procedure calls contain a message body in which parameters and payloads are stored. When forwarding a publication or procedure call to another client, this data must be potentially transferred to another replica. The frequency and size of a topic publication payload can get quite high. Therefore it is undesirable to initiate a state change for publications and RPCs. Instead of routing every publications and RPC over the leader of the cluster, the payload can be transferred directly between the replicas that manage affected clients. This is possible as neither publications nor RPCs contain information that is relevant for the routing.
 
