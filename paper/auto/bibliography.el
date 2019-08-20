@@ -5,6 +5,7 @@
     "WAMP:2019"
     "CFX:2019"
     "Emitter:2019"
+    "bondy-tags"
     "Ongaro:2014"
     "WAMP_session:2019"
     "DOCKER:2019"
@@ -17,6 +18,7 @@
     "ozsu2011principles"
     "deka2013survey"
     "levy1990distributed"
-    "depardon2013analysis"))
+    "depardon2013analysis"
+    "kubernetes"))
  :bibtex)
 
