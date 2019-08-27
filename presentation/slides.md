@@ -30,50 +30,103 @@ revealOptions:
 # I. Introduction
 ## What is WAMP?
 
-> TODO: Image with micro-services (frontend and backend) using WAMP
+<p><img src="res/what-is-wamp.svg" height="730"></p>
+
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>,
+  <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
 
 ----
 
 # II. Limitations of WAMP
 ## Centralized routing
 
-> TODO: Image with a failing router and dead client connections
+<p><img src="res/centralized-routing.svg" height="730"></p>
+
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>,
+  <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
 
 ----
 
 # III. A Decentralized WAMP Router
 ## State of a WAMP Router
 
-1. Subscriptions
-2. Registrations
-3. Transport Information
+<p><img src="res/state-of-a-wamp-router.svg" height="730"></p>
 
-> TODO: Put this into an image where a client is publishing topics and other clients are receiving it
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>,
+  <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
 
 ----
 
 # IV. Background
 ## Sharing State
 
-> TODO: Add labels for Distributed Databases, Distributed Filesystems, and Consensus Algorithm
-
-<p><img src="res/sharing_state.svg" height="750"></p>
+<p><img src="res/sharing_state.svg" height="730"></p>
 
 <p><small>
   Icons made by
-  <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>,
+  <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>,
+  <a href="https://www.flaticon.com/authors/prettycons" title="prettycons">prettycons</a>
   from
   <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
-  and licensed by
+  are licensed by
   <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
 </small></p>
 
 ----
 
 # V. Solution Concept
-## Replica Communication
+## Replica Communication / Databases and Filesystems
 
-> TODO: insert image showing the complexity introduced with replica communication when not using a consensus algorithm
+<p><img src="res/sending_messages_1.svg" height="730"></p>
+
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>,
+  <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>,
+  <a href="https://www.flaticon.com/authors/prettycons" title="prettycons">prettycons</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
+
+----
+
+# V. Solution Concept
+## Replica Communication / Consensus Algorithm
+
+<p><img src="res/sending_messages_2.svg" height="730"></p>
+
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
 
 ---
 
@@ -87,35 +140,80 @@ revealOptions:
 # VI. Implementing A Distributed WAMP-Router
 ## Connection Management
 
-> TODO: Add image
+<p><img src="res/router_connections.svg" height="730"></p>
+
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
 
 ----
 
 # VI. Implementing A Distributed WAMP-Router
 ## State Management
 
-> TODO: Add image
+<p><img src="res/state_management.svg" height="730"></p>
+
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
 
 ----
 
 # VI. Implementing A Distributed WAMP-Router
 ## Storing State
 
-> TODO: Add image
+<p><img src="res/storage_management.svg" height="730"></p>
+
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
 
 ----
 
 # VI. Implementing A Distributed WAMP-Router
 ## Running a Node
 
-> TODO: Add image
+<p><img src="res/node.svg" height="730"></p>
+
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
 
 ----
 
 # VI. Implementing A Distributed WAMP-Router
 ## Implementing the Router
 
-> TODO: Add image
+<p><img src="res/implementing-the-router.svg" height="730"></p>
+
+<p><small>
+  Icons made by
+  <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  are licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small></p>
 
 ---
 
@@ -134,7 +232,12 @@ revealOptions:
 # VII. Validation
 ## Results
 
-> TODO: Add graphs
+<p>
+  <img style="margin: 0 4em;" src="res/graphs/container-size.png" height="375">
+  <img style="margin: 0 4em;" src="res/graphs/ram-usage.png" height="375">
+  <img style="margin: 0 4em;" src="res/graphs/high-load.png" height="375">
+  <img style="margin: 0 4em;" src="res/graphs/scaling-out.png" height="375">
+</p>
 
 ----
 
