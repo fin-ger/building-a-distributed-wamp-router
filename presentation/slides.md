@@ -225,7 +225,7 @@ revealOptions:
 # VII. Validation
 ## Test Setup
 
-<p><img src="res/test-setup.svg" height="680"></p>
+<p><img src="res/test-setup.svg" height="670"></p>
 
 <p style="line-height: 1"><small>
   Server icon made by
