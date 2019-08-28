@@ -50,4 +50,4 @@ ticks = [20, 40, 60, 80, 100]
 plt.xticks(range(0, len(ticks) * 3, 3), ticks)
 plt.xlim(-3, len(ticks) * 3)
 plt.legend(loc='best')
-plt.savefig(path + ".png")
+plt.savefig(path + ".png", dpi=300)

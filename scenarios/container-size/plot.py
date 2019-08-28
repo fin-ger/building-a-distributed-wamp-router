@@ -26,4 +26,4 @@ for bar in bars:
 plt.xticks(x, [x.decode('utf-8') for x in data['name']])
 plt.title('container size of tested routers/brokers')
 plt.ylabel('size in MiB')
-plt.savefig(filename + ".png")
+plt.savefig(filename + ".png", dpi=300)

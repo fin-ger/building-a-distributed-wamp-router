@@ -62,4 +62,4 @@ for idx, filename in enumerate(glob.glob(path + "-*.csv")):
 ticks = [0, 1, 2, 3, 4, 5]
 plt.xticks(range(0, len(ticks)), ticks)
 plt.legend(loc='upper left')
-plt.savefig(path + ".png")
+plt.savefig(path + ".png", dpi=300)

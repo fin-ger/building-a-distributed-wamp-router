@@ -254,6 +254,14 @@ body:not(.print-pdf) .reveal .slides section:not(.stack):first-child::before,
     z-index: -1;
 }
 
+.reveal .slides .pdf-page:first-child section:not(.stack) * {
+    z-index: 2;
+    position: relative;
+    visibility: visible !important;
+    padding: 0;
+    margin: 0;
+}
+
 /*
 Atom One Light by Daniel Gamage
 Original One Light Syntax theme from https://github.com/atom/one-light-syntax

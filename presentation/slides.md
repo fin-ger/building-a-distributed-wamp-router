@@ -230,14 +230,26 @@ revealOptions:
 ----
 
 # VII. Validation
-## Results
+## Results / Resource Consumption
 
 <p>
-  <img style="margin: 0 4em;" src="res/graphs/container-size.png" height="375">
-  <img style="margin: 0 4em;" src="res/graphs/ram-usage.png" height="375">
-  <img style="margin: 0 4em;" src="res/graphs/high-load.png" height="375">
-  <img style="margin: 0 4em;" src="res/graphs/scaling-out.png" height="375">
+  <img style="margin: 2em 1em 0 0;" src="res/graphs/container-size.png" height="622">
+  <img style="margin: 2em 0 0 0;" src="res/graphs/ram-usage.png" height="622">
 </p>
+
+----
+
+# VII. Validation
+## Results / Performance
+
+<img style="margin: 1em 0 0 10em;" src="res/graphs/high-load.png" height="750">
+
+----
+
+# VIII. Validation
+## Results / Scaling-Out
+
+<img style="margin: 1em 0 0 10em;" src="res/graphs/scaling-out.png" height="750">
 
 ----
 
