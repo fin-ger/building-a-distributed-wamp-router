@@ -225,7 +225,30 @@ revealOptions:
 # VII. Validation
 ## Test Setup
 
-> TODO: Add image
+<p><img src="res/test-setup.svg" height="680"></p>
+
+<p style="line-height: 1"><small>
+  Server icon made by
+  <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
+  from
+  <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+  is licensed by
+  <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC 3.0 BY</a>
+</small>
+<br>
+<small>
+  Docker logo from dotCloud, Inc. is licensed by
+  <a href="https://www.apache.org/licenses/LICENSE-2.0" title="Apache License 2.0">Apache License 2.0</a>
+</small>
+<br>
+<small>
+  Kubernetes logo made by
+  <a href="https://www.linuxfoundation.org/trademark-usage/" title="The Linux Foundation">The Linux Foundation</a>
+  from
+  <a href="https://github.com/kubernetes/kubernetes" title="github.com">github.com</a>
+  is licensed by
+  <a href="http://creativecommons.org/licenses/by/4.0/" title="Creative Commons BY 4.0">CC 4.0 BY</a>
+</small></p>
 
 ----
 
@@ -255,4 +278,6 @@ revealOptions:
 
 # Conclusion and Future Work
 
-> TODO
+ - Implementing Remote-Procedure-Calls
+ - Extract stable code into standalone libraries
+ - Extended WAMP-Profile implementation via Router-Plugins
