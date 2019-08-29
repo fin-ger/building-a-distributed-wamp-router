@@ -269,7 +269,7 @@ revealOptions:
 
 ----
 
-# VIII. Validation
+# VII. Validation
 ## Results / Scaling-Out
 
 <img style="margin: 1em 0 0 10em;" src="res/graphs/scaling-out.png" height="750">
