@@ -30,6 +30,31 @@ script:
 
   - docker run -it --rm -v "$(pwd):/data" aergus/latex /bin/bash -c "cd /data/paper && make pdf"
 
+  - "docker run -it --rm -v \"$(pwd):/data\" node:alpine /bin/ash -c \"
+    apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      freetype-dev \
+      harfbuzz \
+      ca-certificates \
+      ttf-freefont \
+
+    export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
+    npm install -g reveal-md
+    sed -i \\\"s/format: 'A4'/width: 1920, height: 1080/g\\\" \
+      /usr/local/lib/node_modules/reveal-md/lib/print.js
+
+    cd /data/presentation
+    mkdir -p build
+
+    reveal-md --css css/fork-awesome.min.css,css/ovgu-cs.css slides.md \
+      --print build/slides.pdf \
+      --puppeteer-chromium-executable /usr/bin/chromium-browser \
+      --puppeteer-launch-args='--no-sandbox --disable-dev-shm-usage'
+    \""
+
 before_deploy:
   - git tag -f travis-dev-build
   - git remote add gh https://${TRAVIS_REPO_SLUG%/*}:${GITHUB_API_KEY}@github.com/${TRAVIS_REPO_SLUG}.git
@@ -39,7 +64,9 @@ before_deploy:
 deploy:
   provider: releases
   api-key: $GITHUB_API_KEY
-  file: paper/build/paper.pdf
+  file:
+    - paper/build/paper.pdf
+    - presentation/build/slides.pdf
   skip_cleanup: true
   name: latest paper build
   prerelease: true
