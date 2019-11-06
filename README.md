@@ -12,6 +12,9 @@
   <a href="https://github.com/fin-ger/building-a-distributed-wamp-router/blob/master/LICENSE.code">
     <img alt="Code License" src="https://img.shields.io/badge/code%20license-BSD%203--Clause-yellow">
   </a>
+  <a href="http://spacemacs.org">
+    <img src="https://cdn.rawgit.com/syl20bnr/spacemacs/442d025779da2f62fc86c2082703697714db6514/assets/spacemacs-badge.svg" />
+  </a>
   <br>
   <i>This repository contains research results for <a href="https://github.com/verkehrsministerium/autobahnkreuz-rs">autobahnkreuz-rs</a></i>
 </p>
